@@ -1,4 +1,4 @@
-console.warn('HERE I AM BABY', 25);
+console.log(27);
 
 var GRAY_ICON =
   'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-gray.svg';
@@ -14,6 +14,7 @@ TrelloPowerUp.initialize({
           return t.modal({
             title: 'New Time Entry',
             url: 'https://cajacko.github.io/trello-timesheet/form.html',
+            height: 500,
           });
         },
       },
