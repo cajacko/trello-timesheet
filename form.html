@@ -8,15 +8,15 @@
   </head>
   <body>
     <form id="timesheet">
-      <label for="estimateSize">Estimate:</label>
-      <select name="size" id="estimateSize">
-        <option value="small">Small 👕</option>
-        <option value="medium">Medium 👚</option>
-        <option value="large">Large 👔</option>
-        <option value="x-large">Extra Large 👖</option>
-      </select>
-      <label for="timesheetDate">Estimate:</label>
+      <label for="timesheetDate">Date:</label>
       <input id="timesheetDate" type="text" name="date" placeholder="Date: 2018-01-12" />
+
+      <label for="timesheetTime">Time (hrs):</label>
+      <input id="timesheetTime" type="number" name="time" placeholder="e.g: 2" />
+
+      <label for="timesheetNotes">Notes:</label>
+      <textarea id="timesheetNotes" name="notes" placeholder="e.g: 2"></textarea>
+
       <button type="submit" class="mod-primary">Save</button>
     </form>
   </body>
