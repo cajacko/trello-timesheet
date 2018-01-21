@@ -1,4 +1,4 @@
-console.warn('HERE I AM BABY', 1);
+console.warn('HERE I AM BABY', 4);
 
 var GRAY_ICON =
   'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-gray.svg';
@@ -7,10 +7,18 @@ TrelloPowerUp.initialize({
   'attachment-sections': function(t, options) {
     console.warn('Attachment section', options);
 
-    var claimed = options.entries.filter(function(attachment) {
-      console.warn('Claim', attachment);
-      return true;
-    });
+    // var claimed = options.entries.filter(function(attachment) {
+    //   console.warn('Claim', JSON.stringiattachment);
+    //   return true;
+    // });
+
+    var claimed = {
+      edgeColor: null,
+      id: '5a64b38a450e744de132ed01',
+      name: 'http://tech.trello.com/power-up-tutorial-part-one/',
+      previews: [],
+      url: 'http://tech.trello.com/power-up-tutorial-part-one/',
+    };
 
     return [
       {
