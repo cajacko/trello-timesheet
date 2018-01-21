@@ -60,7 +60,7 @@ window.timesheet.addEventListener('submit', function(event) {
           );
         })
         .then(function(data) {
-          console.warn('data', data);
+          console.warn('data', data.parameter);
           t.closePopup();
         })
         .catch(function(e) {
