@@ -9,7 +9,7 @@
   "capabilities": ["callback", "card-buttons"],
   "connectors": {
     "iframe": {
-      "url": "./index.html"
+      "url": "https://cajacko.github.io/trello-timesheet/index.html"
     }
   }
 }
