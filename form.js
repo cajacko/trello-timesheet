@@ -50,19 +50,18 @@ window.timesheet.addEventListener('submit', function(event) {
           console.warn('res', res);
 
           if (res.ok) {
-            t.closePopup();
-          } else {
-            console.error(res);
-
-            error(
-              new Error("Non 200 status, probably didn't save: " + res.status),
-            );
+            return res.json();
           }
 
-          return res.json();
+          console.error(res);
+
+          error(
+            new Error("Non 200 status, probably didn't save: " + res.status),
+          );
         })
         .then(function(data) {
-          console.warn(data);
+          console.warn('data', data);
+          t.closePopup();
         })
         .catch(function(e) {
           error(e);
