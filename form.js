@@ -45,7 +45,9 @@ window.timesheet.addEventListener('submit', function(event) {
           if (res.status === 200) {
             t.closePopup();
           } else {
-            error(new Error("Non 200 status, probably didn't save"));
+            error(
+              new Error("Non 200 status, probably didn't save: " + res.status),
+            );
           }
         })
         .catch(function(e) {
