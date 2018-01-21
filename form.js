@@ -24,6 +24,10 @@ window.timesheet.addEventListener('submit', function(event) {
 
       console.warn(payload);
 
+      function error(e) {
+        console.error(e);
+      }
+
       fetch(
         'https://script.google.com/a/charliejackson.com/macros/s/AKfycbx1wqNJ0XN0alA-5_E3E2gynKedBqeVSCmIa_Ai5DuJMmw28FI/exec',
         {
@@ -38,16 +42,14 @@ window.timesheet.addEventListener('submit', function(event) {
         },
       )
         .then(function(res) {
-          console.warn('res', res);
-          return res.json();
-        })
-        .then(function(data) {
-          console.warn('data', data);
-          t.closePopup();
+          if (res.status === 200) {
+            t.closePopup();
+          } else {
+            error(new Error("Non 200 status, probably didn't save"));
+          }
         })
         .catch(function(e) {
-          console.error(e);
-          t.closePopup();
+          error(e);
         });
     });
 });
