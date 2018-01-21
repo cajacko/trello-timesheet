@@ -28,19 +28,24 @@ window.timesheet.addEventListener('submit', function(event) {
         console.error(e);
       }
 
-      fetch(
-        'https://script.google.com/a/charliejackson.com/macros/s/AKfycbx1wqNJ0XN0alA-5_E3E2gynKedBqeVSCmIa_Ai5DuJMmw28FI/exec',
-        {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          mode: 'no-cors',
-          method: 'POST',
-          redirect: 'follow',
-          body: JSON.stringify(payload),
-        },
-      )
+      var url =
+        'https://script.google.com/a/charliejackson.com/macros/s/AKfycbx1wqNJ0XN0alA-5_E3E2gynKedBqeVSCmIa_Ai5DuJMmw28FI/exec?';
+
+      url += 'date=' + encodeURIComponent(window.timesheetDate.value);
+      url += '&time=' + encodeURIComponent(window.timesheetTime.value);
+      url += '&notes=' + encodeURIComponent(window.timesheetNotes.value);
+      url += '&cardId=' + encodeURIComponent(context.card);
+      url += '&member=' + encodeURIComponent(context.member);
+
+      fetch(url, {
+        // headers: {
+        //   Accept: 'application/json',
+        //   'Content-Type': 'application/json',
+        // },
+        method: 'GET',
+        redirect: 'follow',
+        // body: JSON.stringify(payload),
+      })
         .then(function(res) {
           if (res.ok) {
             t.closePopup();
