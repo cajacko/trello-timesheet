@@ -31,6 +31,7 @@ window.timesheet.addEventListener('submit', function(event) {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
+          mode: 'no-cors',
           method: 'POST',
           body: JSON.stringify(payload),
         },
