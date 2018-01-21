@@ -33,6 +33,7 @@ window.timesheet.addEventListener('submit', function(event) {
           },
           mode: 'no-cors',
           method: 'POST',
+          redirect: 'follow',
           body: JSON.stringify(payload),
         },
       )
