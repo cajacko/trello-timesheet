@@ -1,45 +1,9 @@
-console.warn('HERE I AM BABY', 4);
+console.warn('HERE I AM BABY', 5);
 
 var GRAY_ICON =
   'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-gray.svg';
 
 TrelloPowerUp.initialize({
-  'attachment-sections': function(t, options) {
-    console.warn('Attachment section', options);
-
-    // var claimed = options.entries.filter(function(attachment) {
-    //   console.warn('Claim', JSON.stringiattachment);
-    //   return true;
-    // });
-
-    var claimed = {
-      edgeColor: null,
-      id: '5a64b38a450e744de132ed01',
-      name: 'http://tech.trello.com/power-up-tutorial-part-one/',
-      previews: [],
-      url: 'http://tech.trello.com/power-up-tutorial-part-one/',
-    };
-
-    return [
-      {
-        id: 'Timesheet', // optional if you aren't using a function for the title
-        claimed: claimed,
-        icon: GRAY_ICON, // Must be a gray icon, colored icons not allowed.
-        title: 'Timesheet',
-        content: {
-          type: 'iframe',
-          url: t.signUrl(
-            'https://cajacko.github.io/trello-timesheet/section.html',
-            {
-              arg: 'you can pass your section args here',
-            },
-          ),
-          height: 230,
-        },
-      },
-    ];
-  },
-
   'card-buttons': function(t, options) {
     return [
       {
