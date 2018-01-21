@@ -11,6 +11,8 @@ window.timesheet.addEventListener('submit', function(event) {
 
   var context = t.getContext();
 
+  console.warn(context);
+
   return t
     .set('card', 'shared', 'lastSetTimesheet', window.timesheetDate.value)
     .then(function() {
