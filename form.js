@@ -47,6 +47,8 @@ window.timesheet.addEventListener('submit', function(event) {
         // body: JSON.stringify(payload),
       })
         .then(function(res) {
+          console.warn('res', res);
+
           if (res.ok) {
             t.closePopup();
           } else {
