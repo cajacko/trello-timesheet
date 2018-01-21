@@ -56,6 +56,11 @@ window.timesheet.addEventListener('submit', function(event) {
               new Error("Non 200 status, probably didn't save: " + res.status),
             );
           }
+
+          return res.json();
+        })
+        .then(function(data) {
+          console.warn(data);
         })
         .catch(function(e) {
           error(e);
