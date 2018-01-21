@@ -11,8 +11,6 @@ window.timesheet.addEventListener('submit', function(event) {
 
   var context = t.getContext();
 
-  console.warn(context);
-
   return t
     .set('card', 'shared', 'lastSetTimesheet', window.timesheetDate.value)
     .then(function() {
@@ -21,6 +19,7 @@ window.timesheet.addEventListener('submit', function(event) {
         time: window.timesheetTime.value,
         notes: window.timesheetNotes.value,
         cardId: context.card,
+        member: context.member,
       };
 
       console.warn(payload);
