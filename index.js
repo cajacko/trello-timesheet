@@ -1,16 +1,21 @@
-console.warn('HERE I AM BABY');
+console.warn('HERE I AM BABY', 1);
 
 var GRAY_ICON =
   'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-gray.svg';
 
 TrelloPowerUp.initialize({
   'attachment-sections': function(t, options) {
-    console.warn('Attachment section');
+    console.warn('Attachment section', options);
+
+    var claimed = options.entries.filter(function(attachment) {
+      console.warn('Claim', attachment);
+      return true;
+    });
 
     return [
       {
         id: 'Timesheet', // optional if you aren't using a function for the title
-        // claimed: claimed,
+        claimed: claimed,
         icon: GRAY_ICON, // Must be a gray icon, colored icons not allowed.
         title: 'Timesheet',
         content: {
