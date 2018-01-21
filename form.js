@@ -8,17 +8,38 @@ t.render(function() {
 window.timesheet.addEventListener('submit', function(event) {
   // Stop the browser trying to submit the form itself.
   event.preventDefault();
-  console.warn(window.timesheetDate.value);
-  console.warn(window.timesheetTime.value);
-  console.warn(window.timesheetNotes.value);
 
   var context = t.getContext();
-
-  console.warn(JSON.stringify(context, null, 2));
 
   return t
     .set('card', 'shared', 'lastSetTimesheet', window.timesheetDate.value)
     .then(function() {
-      t.closePopup();
+      var payload = {
+        date: window.timesheetDate.value,
+        time: window.timesheetTime.value,
+        notes: window.timesheetNotes.value,
+        cardId: context.card,
+      };
+
+      console.warn(payload);
+
+      fetch(
+        'https://script.google.com/a/charliejackson.com/macros/s/AKfycbx1wqNJ0XN0alA-5_E3E2gynKedBqeVSCmIa_Ai5DuJMmw28FI/exec',
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          body: JSON.stringify(payload),
+        },
+      )
+        .then(function(res) {
+          return res.json();
+        })
+        .then(function(data) {
+          t.closePopup();
+        })
+        .catch(console.error);
     });
 });
