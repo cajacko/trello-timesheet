@@ -37,9 +37,11 @@ window.timesheet.addEventListener('submit', function(event) {
         },
       )
         .then(function(res) {
+          console.warn('res', res);
           return res.json();
         })
         .then(function(data) {
+          console.warn('data', data);
           t.closePopup();
         })
         .catch(console.error);
