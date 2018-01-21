@@ -61,7 +61,7 @@ window.timesheet.addEventListener('submit', function(event) {
         })
         .then(function(data) {
           console.warn('data', data.parameter);
-          t.closePopup();
+          t.closeModal();
         })
         .catch(function(e) {
           error(e);
