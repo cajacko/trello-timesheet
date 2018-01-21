@@ -45,6 +45,9 @@ window.timesheet.addEventListener('submit', function(event) {
           console.warn('data', data);
           t.closePopup();
         })
-        .catch(console.error);
+        .catch(function(e) {
+          console.error(e);
+          t.closePopup();
+        });
     });
 });
