@@ -10,11 +10,6 @@ function getTime() {
     console.error(e);
   }
 
-  context = {
-    card: '5a5f3a8589cc03e516be856a',
-    member: '50ed911f70cb352222002f03',
-  };
-
   var url = baseUrl;
   url += '&cardId=' + encodeURIComponent(context.card);
   url += '&member=' + encodeURIComponent(context.member);
@@ -62,8 +57,6 @@ function getTime() {
       error(e);
     });
 }
-
-// getTime();
 
 t.render(function() {
   t.sizeTo('#timesheet').done();
