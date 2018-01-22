@@ -66,7 +66,6 @@ function getTime() {
 }
 
 t.render(function() {
-  t.sizeTo('#timesheet').done();
   window.timesheetDate.value = new Date().toISOString().split('T')[0];
 
   getTime();
