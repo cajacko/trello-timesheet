@@ -19,7 +19,7 @@ function addRow(row) {
     '</td></tr>';
 
   document.getElementById('tbody').insertAdjacentHTML('afterbegin', html);
-  total += row[2];
+  total += parseInt(row[2], 10);
   document.getElementById('total').textContent = total;
 }
 
