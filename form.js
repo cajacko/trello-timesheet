@@ -101,13 +101,14 @@ window.timesheet.addEventListener('submit', function(event) {
 
       fetch(url, { redirect: 'follow' })
         .then(function(res) {
+          document.getElementById('submit').style.display = 'block';
+
           if (res.ok) {
             return res.json();
           }
 
           console.error(res);
 
-          document.getElementById('submit').style.display = 'block';
           status.textContent =
             'Could not set the new time, try and submit again, and check the timesheet to see if it has updated';
 
@@ -122,6 +123,7 @@ window.timesheet.addEventListener('submit', function(event) {
         })
         .catch(function(e) {
           document.getElementById('submit').style.display = 'block';
+
           status.textContent =
             'Undefined error, check logs for details. The entry may have saved though, check the spreadsheet';
 
