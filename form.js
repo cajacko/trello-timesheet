@@ -2,7 +2,6 @@ var total = 0;
 var t = TrelloPowerUp.iframe();
 
 var context = t.getContext();
-var status;
 
 var baseUrl =
   'https://script.google.com/a/charliejackson.com/macros/s/AKfycbx1wqNJ0XN0alA-5_E3E2gynKedBqeVSCmIa_Ai5DuJMmw28FI/exec?';
@@ -70,8 +69,6 @@ function getTime() {
 t.render(function() {
   window.timesheetDate.value = new Date().toISOString().split('T')[0];
 
-  status = document.getElementById('status');
-
   getTime();
 });
 
@@ -80,8 +77,7 @@ window.timesheet.addEventListener('submit', function(event) {
   event.preventDefault();
 
   document.getElementById('submit').style.display = 'none';
-
-  status.textContent = 'Saving';
+  document.getElementById('status').textContent = 'Saving';
 
   return t
     .set('card', 'shared', 'lastSetTimesheet', window.timesheetDate.value)
@@ -111,7 +107,7 @@ window.timesheet.addEventListener('submit', function(event) {
 
           console.error(res);
 
-          status.textContent =
+          document.getElementById('status').textContent =
             'Could not set the new time, try and submit again, and check the timesheet to see if it has updated';
 
           error(
@@ -120,13 +116,13 @@ window.timesheet.addEventListener('submit', function(event) {
           );
         })
         .then(function(data) {
-          status.textContent = 'Saved';
+          document.getElementById('status').textContent = 'Saved';
           addRow([payload.date, payload.cardId, payload.time, payload.notes]);
         })
         .catch(function(e) {
           document.getElementById('submit').style.display = 'block';
 
-          status.textContent =
+          document.getElementById('status').textContent =
             'Undefined error, check logs for details. The entry may have saved though, check the spreadsheet';
 
           error(
