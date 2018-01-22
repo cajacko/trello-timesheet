@@ -1,4 +1,4 @@
-console.log(11);
+console.log(13);
 
 var GRAY_ICON =
   'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-gray.svg';
@@ -7,25 +7,20 @@ TrelloPowerUp.initialize({
   'card-badges': function(t, opts) {
     console.warn('init');
 
-    return [
-      {
-        dynamic: function() {
-          return t
-            .get('card', 'shared', 'lastSetTimesheet')
-            .then(function(lastSetTimesheet) {
-              console.warn('lastSetTimesheet', lastSetTimesheet);
+    return t
+      .get('card', 'shared', 'lastSetTimesheet')
+      .then(function(lastSetTimesheet) {
+        if (!lastSetTimesheet) return [];
 
-              if (!lastSetTimesheet) return null;
-
-              return {
-                text: lastSetTimesheet,
-                color: null,
-                refresh: 10,
-              };
-            });
-        },
-      },
-    ];
+        return [
+          {
+            text: lastSetTimesheet,
+            color: null,
+            refresh: 10,
+            icon: GRAY_ICON,
+          },
+        ];
+      });
   },
   'card-buttons': function(t, options) {
     return [
