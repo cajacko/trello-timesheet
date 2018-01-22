@@ -2,6 +2,7 @@ var total = 0;
 var t = TrelloPowerUp.iframe();
 
 var context = t.getContext();
+var error = document.getElementById('error');
 
 var baseUrl =
   'https://script.google.com/a/charliejackson.com/macros/s/AKfycbx1wqNJ0XN0alA-5_E3E2gynKedBqeVSCmIa_Ai5DuJMmw28FI/exec?';
@@ -26,7 +27,7 @@ function error(e, errorText) {
   console.error(e);
 
   document.getElementById('loading').style.display = 'none';
-  var error = document.getElementById('error');
+
   error.textContent = errorText || 'Undefined error, check logs for details';
   error.style.display = 'block';
 }
@@ -75,6 +76,8 @@ window.timesheet.addEventListener('submit', function(event) {
   // Stop the browser trying to submit the form itself.
   event.preventDefault();
 
+  error.textContent = 'Saving';
+
   return t
     .set('card', 'shared', 'lastSetTimesheet', window.timesheetDate.value)
     .then(function() {
@@ -107,6 +110,7 @@ window.timesheet.addEventListener('submit', function(event) {
           );
         })
         .then(function(data) {
+          error.textContent = 'Saved';
           addRow([payload.date, payload.cardId, payload.time, payload.notes]);
         })
         .catch(function(e) {
