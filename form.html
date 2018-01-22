@@ -15,7 +15,7 @@
         max-width: 500px;
       }
 
-      #history {
+      #history, #error {
         display: none;
       }
 
@@ -86,9 +86,10 @@
         <label for="timesheetNotes">Notes:</label>
         <textarea id="timesheetNotes" name="notes" placeholder="e.g: 2"></textarea>
 
-        <button type="submit" class="mod-primary">Add new time entry</button>
+        <button type="submit" id="submit" class="mod-primary">Add new time entry</button>
       </form>
 
+      <p id="status"></p>
       <p id="error"></p>
 
       <div id="loading">

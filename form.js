@@ -2,7 +2,7 @@ var total = 0;
 var t = TrelloPowerUp.iframe();
 
 var context = t.getContext();
-var error = document.getElementById('error');
+var status = document.getElementById('status');
 
 var baseUrl =
   'https://script.google.com/a/charliejackson.com/macros/s/AKfycbx1wqNJ0XN0alA-5_E3E2gynKedBqeVSCmIa_Ai5DuJMmw28FI/exec?';
@@ -28,6 +28,7 @@ function error(e, errorText) {
 
   document.getElementById('loading').style.display = 'none';
 
+  var error = document.getElementById('error');
   error.textContent = errorText || 'Undefined error, check logs for details';
   error.style.display = 'block';
 }
@@ -76,7 +77,9 @@ window.timesheet.addEventListener('submit', function(event) {
   // Stop the browser trying to submit the form itself.
   event.preventDefault();
 
-  error.textContent = 'Saving';
+  document.getElementById('submit').style.display = 'none';
+
+  status.textContent = 'Saving';
 
   return t
     .set('card', 'shared', 'lastSetTimesheet', window.timesheetDate.value)
@@ -104,16 +107,24 @@ window.timesheet.addEventListener('submit', function(event) {
 
           console.error(res);
 
+          document.getElementById('submit').style.display = 'block';
+          status.textContent =
+            'Could not set the new time, try and submit again, and check the timesheet to see if it has updated';
+
           error(
             new Error("Non 200 status, probably didn't save: " + res.status),
             'Could not set the new time, try and submit again, and check the timesheet to see if it has updated',
           );
         })
         .then(function(data) {
-          error.textContent = 'Saved';
+          status.textContent = 'Saved';
           addRow([payload.date, payload.cardId, payload.time, payload.notes]);
         })
         .catch(function(e) {
+          document.getElementById('submit').style.display = 'block';
+          status.textContent =
+            'Undefined error, check logs for details. The entry may have saved though, check the spreadsheet';
+
           error(
             e,
             'Undefined error, check logs for details. The entry may have saved though, check the spreadsheet',
