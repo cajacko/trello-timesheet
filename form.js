@@ -21,6 +21,7 @@ function addRow(row) {
 
   document.getElementById('tbody').insertAdjacentHTML('afterbegin', html);
   total += row[2];
+  document.getElementById('total').textContent = total;
 }
 
 function error(e, errorText) {
@@ -60,7 +61,6 @@ function getTime() {
 
       document.getElementById('history').style.display = 'block';
       document.getElementById('loading').style.display = 'none';
-      document.getElementById('total').textContent = total;
     })
     .catch(function(e) {
       error(e);
