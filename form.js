@@ -2,7 +2,7 @@ var total = 0;
 var t = TrelloPowerUp.iframe();
 
 var context = t.getContext();
-var status = document.getElementById('status');
+var status;
 
 var baseUrl =
   'https://script.google.com/a/charliejackson.com/macros/s/AKfycbx1wqNJ0XN0alA-5_E3E2gynKedBqeVSCmIa_Ai5DuJMmw28FI/exec?';
@@ -69,6 +69,8 @@ function getTime() {
 
 t.render(function() {
   window.timesheetDate.value = new Date().toISOString().split('T')[0];
+
+  status = document.getElementById('status');
 
   getTime();
 });
