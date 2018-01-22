@@ -22,16 +22,16 @@ function addRow(row) {
   total += row[2];
 }
 
+function error(e, errorText) {
+  console.error(e);
+
+  document.getElementById('loading').style.display = 'none';
+  var error = document.getElementById('error');
+  error.textContent = errorText || 'Undefined error, check logs for details';
+  error.style.display = 'block';
+}
+
 function getTime() {
-  function error(e) {
-    console.error(e);
-  }
-
-  context = {
-    card: '5a5f3a8589cc03e516be856a',
-    member: '50ed911f70cb352222002f03',
-  };
-
   var url = baseUrl;
   url += '&cardId=' + encodeURIComponent(context.card);
   url += '&member=' + encodeURIComponent(context.member);
@@ -44,7 +44,10 @@ function getTime() {
 
       console.error(res);
 
-      error(new Error('Non 200 status, could not get: ' + res.status));
+      error(
+        new Error('Non 200 status, could not get: ' + res.status),
+        'Could not get the existing timesheet, check logs for details',
+      );
     })
     .then(function(data) {
       total = 0;
@@ -61,8 +64,6 @@ function getTime() {
       error(e);
     });
 }
-
-getTime();
 
 t.render(function() {
   t.sizeTo('#timesheet').done();
@@ -86,10 +87,6 @@ window.timesheet.addEventListener('submit', function(event) {
         member: context.member,
       };
 
-      function error(e) {
-        console.error(e);
-      }
-
       var url = baseUrl;
       url += 'date=' + encodeURIComponent(window.timesheetDate.value);
       url += '&time=' + encodeURIComponent(window.timesheetTime.value);
@@ -107,13 +104,17 @@ window.timesheet.addEventListener('submit', function(event) {
 
           error(
             new Error("Non 200 status, probably didn't save: " + res.status),
+            'Could not set the new time, try and submit again, and check the timesheet to see if it has updated',
           );
         })
         .then(function(data) {
           addRow([payload.date, payload.cardId, payload.time, payload.notes]);
         })
         .catch(function(e) {
-          error(e);
+          error(
+            e,
+            'Undefined error, check logs for details. The entry may have saved though, check the spreadsheet',
+          );
         });
     });
 });
