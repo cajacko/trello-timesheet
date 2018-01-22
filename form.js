@@ -118,6 +118,13 @@ window.timesheet.addEventListener('submit', function(event) {
         .then(function(data) {
           document.getElementById('status').textContent = 'Saved';
           addRow([payload.date, payload.cardId, payload.time, payload.notes]);
+
+          t.set(
+            'card',
+            'shared',
+            'lastSetTimesheet',
+            window.timesheetDate.value,
+          );
         })
         .catch(function(e) {
           document.getElementById('submit').style.display = 'block';
