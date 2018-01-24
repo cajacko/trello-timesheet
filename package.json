@@ -1,0 +1,9 @@
+{
+  "name": "timesheet",
+  "version": "0.1.0",
+  "description": "Timesheet for Charlie Jackson",
+  "main": "index.js",
+  "repository": "https://github.com/cajacko/trello-timesheet.git",
+  "author": "Charlie Jackson",
+  "license": "MIT"
+}
