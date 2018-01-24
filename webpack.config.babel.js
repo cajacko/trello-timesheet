@@ -70,6 +70,9 @@ module.exports = {
     }),
     new webpack.HashedModuleIdsPlugin(),
     new WebpackChunkHash(),
+    new webpack.DefinePlugin({
+      'process.env.DATABASE_URL': `'${process.env.DATABASE_URL}'`,
+    }),
   ],
   output: {
     filename: '[chunkhash].[name].js',
