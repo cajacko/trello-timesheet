@@ -54,6 +54,10 @@ class Cards {
 
     return Promise.all(promises);
   }
+
+  getSuggestions() {
+    return this.database.getCards();
+  }
 }
 
 export default Cards;

@@ -11,4 +11,8 @@ const database = new Database(process.env.DATABASE_URL);
 
 const cards = new Cards(trello, database);
 
-cards.updateCardsInDatabase();
+// cards.updateCardsInDatabase();
+
+cards.getSuggestions().then(cards => {
+  Object.keys(cards).forEach(id => console.warn(cards[id].name));
+});

@@ -39,6 +39,15 @@ class Database {
 
     return this.set('/lastUpdated', date.toISOString());
   }
+
+  getCards(orderBy = 'dateLastActivity', limit = 10) {
+    return this.database()
+      .ref('/cards')
+      .orderByChild(orderBy)
+      .limitToLast(limit)
+      .once('value')
+      .then(snapshot => snapshot.val());
+  }
 }
 
 export default Database;
