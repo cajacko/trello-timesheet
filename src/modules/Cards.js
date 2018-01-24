@@ -56,7 +56,11 @@ class Cards {
   }
 
   getSuggestions() {
-    return this.database.getCards();
+    console.log('Cards - getSuggestions');
+
+    return this.database
+      .getCards()
+      .then(cards => Object.keys(cards).map(id => cards[id]));
   }
 }
 

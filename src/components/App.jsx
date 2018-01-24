@@ -1,11 +1,19 @@
 import React, { PureComponent } from 'react';
 import Card from 'src/components/Card';
-
-const cards = ['', '', ''];
+import { cards } from 'src/helpers/modules';
 
 class App extends PureComponent {
   constructor(props) {
     super(props);
+
+    this.state = { cards: [] };
+  }
+
+  componentDidMount() {
+    cards.getSuggestions().then(cards => {
+      console.warn(cards);
+      this.setState({ cards });
+    });
   }
 
   render() {
@@ -30,12 +38,19 @@ class App extends PureComponent {
             <div className="col small">Total all time</div>
           </header>
 
-          {cards ? (
+          {this.state.cards ? (
             <ul style={{ paddingLeft: 0 }} className="text-center">
-              {cards.map((card, i) => {
-                const noBorder = i === cards.length - 1;
+              {this.state.cards.map(({ id, name, shortLink }, i) => {
+                const noBorder = i === this.state.cards.length - 1;
 
-                return <Card noBorder={noBorder} />;
+                return (
+                  <Card
+                    key={id}
+                    id={shortLink}
+                    name={name}
+                    noBorder={noBorder}
+                  />
+                );
               })}
             </ul>
           ) : (

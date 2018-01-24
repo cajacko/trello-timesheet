@@ -7,13 +7,15 @@ class Card extends PureComponent {
   }
 
   render() {
-    let classes = 'row pb-3 pt-3 mb-3 mt-3';
+    let classes = 'row pb-3 pt-3';
 
     if (!this.props.noBorder) classes += ' border-bottom';
 
     return (
       <li className={classes}>
-        <div className="col-3 text-left">#id - card name</div>
+        <div className="col-3 text-left small">
+          #{this.props.id} - {this.props.name}
+        </div>
         <CardDay />
         <CardDay />
         <CardDay />
