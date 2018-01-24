@@ -1,13 +1,14 @@
-import * as firebase from 'firebase';
+import Database from 'src/modules/Database';
+import Trello from 'src/modules/Trello';
+import Cards from 'src/modules/Cards';
 
-firebase.initializeApp({ databaseURL: process.env.DATABASE_URL });
+const trello = new Trello(
+  process.env.TRELLO_APPLICATION_KEY,
+  process.env.TRELLO_USER_TOKEN,
+);
 
-console.log('yay');
+const database = new Database(process.env.DATABASE_URL);
 
-// firebase
-//   .database()
-//   .ref('cards/2')
-//   .set({
-//     username: 'My username',
-//     email: 'My email',
-//   });
+const cards = new Cards(trello, database);
+
+cards.updateCardsInDatabase();

@@ -72,6 +72,13 @@ module.exports = {
     new WebpackChunkHash(),
     new webpack.DefinePlugin({
       'process.env.DATABASE_URL': `'${process.env.DATABASE_URL}'`,
+      'process.env.TRELLO_APPLICATION_KEY': `'${
+        process.env.TRELLO_APPLICATION_KEY
+      }'`,
+      'process.env.TRELLO_USER_TOKEN': `'${process.env.TRELLO_USER_TOKEN}'`,
+      'process.env.TRELLO_ORGANISATIONS': `'${
+        process.env.TRELLO_ORGANISATIONS
+      }'`,
     }),
   ],
   output: {

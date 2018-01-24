@@ -10,7 +10,6 @@
   "author": "Charlie Jackson",
   "license": "MIT",
   "devDependencies": {
-    "firebase": "^4.9.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.1.0",
     "babel-loader": "^7.1.2",
@@ -23,6 +22,7 @@
     "css-loader": "^0.28.7",
     "dotenv": "^4.0.0",
     "file-loader": "^1.1.6",
+    "firebase": "^4.9.0",
     "html-webpack-plugin": "^2.30.1",
     "style-loader": "^0.19.1",
     "url-loader": "^0.6.2",
