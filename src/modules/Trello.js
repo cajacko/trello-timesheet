@@ -60,7 +60,7 @@ class Trello {
 
     const promises = trelloOrganisations.map(this.getAllCardsFromOrganisation);
 
-    return Promise.all(promises);
+    return Promise.all(promises).then(results => results[0].concat(results[1]));
   }
 
   getAllCardsFromOrganisation(organisation) {
@@ -69,7 +69,9 @@ class Trello {
     return this.getAllBoardsFromOrganisation(organisation).then(boards => {
       const promises = boards.map(this.getAllCardsFromBoard);
 
-      return Promise.all(promises);
+      return Promise.all(promises).then(results =>
+        results[0].concat(results[1]),
+      );
     });
   }
 
