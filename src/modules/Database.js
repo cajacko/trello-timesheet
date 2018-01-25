@@ -48,6 +48,40 @@ class Database {
       .once('value')
       .then(snapshot => snapshot.val());
   }
+
+  getTime(id) {
+    return this.getOnce(`/times/${id}`).then(time => (time ? time.time : null));
+  }
+
+  updateCardTimes(times) {
+    console.warn(times);
+
+    var updates = {};
+
+    Object.keys(times).forEach(cardId => {
+      const dates = times[cardId];
+
+      Object.keys(dates).forEach(date => {
+        const time = dates[date];
+        const cardDateId = `${cardId}-${date}`;
+
+        updates[`/times/${cardDateId}`] = {
+          cardId,
+          date,
+          time,
+        };
+
+        updates[`/timesByCard/${cardId}/${cardDateId}`] = true;
+        updates[`/timesByDate/${date}/${cardDateId}`] = true;
+      });
+    });
+
+    console.warn(updates);
+
+    return this.database()
+      .ref()
+      .update(updates);
+  }
 }
 
 export default Database;

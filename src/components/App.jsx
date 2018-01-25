@@ -1,12 +1,18 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import Card from 'src/components/Card';
 import { cards } from 'src/helpers/modules';
 
-class App extends PureComponent {
+class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { cards: [] };
+    this.state = {
+      cards: [],
+      changes: {},
+    };
+
+    this.onTimeChange = this.onTimeChange.bind(this);
+    this.saveChanges = this.saveChanges.bind(this);
   }
 
   componentDidMount() {
@@ -14,6 +20,24 @@ class App extends PureComponent {
       console.warn(cards);
       this.setState({ cards });
     });
+  }
+
+  saveChanges(event) {
+    event.preventDefault();
+
+    console.warn('click');
+
+    cards.saveTimes(this.state.changes);
+  }
+
+  onTimeChange(id, date, value) {
+    const changes = Object.assign({}, this.state.changes);
+
+    if (!changes[id]) changes[id] = {};
+
+    changes[id][date] = value;
+
+    this.setState({ changes });
   }
 
   render() {
@@ -40,15 +64,19 @@ class App extends PureComponent {
 
           {this.state.cards ? (
             <ul style={{ paddingLeft: 0 }} className="text-center">
-              {this.state.cards.map(({ id, name, shortLink }, i) => {
+              {this.state.cards.map(({ id, shortLink, name }, i) => {
                 const noBorder = i === this.state.cards.length - 1;
+                let changes = this.state.changes[id] || {};
 
                 return (
                   <Card
                     key={id}
-                    id={shortLink}
+                    id={id}
+                    shortLink={shortLink}
                     name={name}
                     noBorder={noBorder}
+                    changes={changes}
+                    onTimeChange={this.onTimeChange}
                   />
                 );
               })}
@@ -92,7 +120,9 @@ class App extends PureComponent {
           </div>
 
           <div className="col d-flex justify-content-end align-items-end pb-1">
-            <button className="btn btn-success">Save Changes</button>
+            <button className="btn btn-success" onClick={this.saveChanges}>
+              Save Changes
+            </button>
           </div>
         </footer>
       </main>
