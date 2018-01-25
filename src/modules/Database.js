@@ -1,4 +1,5 @@
 import { initializeApp, database } from 'firebase';
+import getFloatFromString from 'src/helpers/getFloatFromString';
 
 class Database {
   constructor(databaseURL) {
@@ -73,7 +74,7 @@ class Database {
     var updates = {};
 
     Object.keys(times).forEach(timeId => {
-      updates[`/times/${timeId}`] = times[timeId];
+      updates[`/times/${timeId}`] = getFloatFromString(times[timeId]);
     });
 
     Object.keys(datesByCard).forEach(cardId => {

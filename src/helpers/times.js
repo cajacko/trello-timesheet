@@ -3,7 +3,7 @@ import cloneDeep from 'lodash/fp/cloneDeep';
 export function setTimes(state, timeId, cardId, dateString, value) {
   const newState = cloneDeep(state);
 
-  newState.times[timeId] = parseInt(value, 10);
+  newState.times[timeId] = value;
 
   if (!newState.datesByCard[cardId]) newState.datesByCard[cardId] = {};
   if (!newState.cardsByDate[dateString]) newState.cardsByDate[dateString] = {};

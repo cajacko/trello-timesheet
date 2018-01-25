@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import Card from 'src/components/Card';
 import getTotal from 'src/helpers/getTotal';
 import AddCard from 'src/components/AddCard';
+import getFloatFromString from 'src/helpers/getFloatFromString';
 
 class App extends PureComponent {
   constructor(props) {
@@ -83,8 +84,7 @@ class App extends PureComponent {
 
       Object.keys(cards).forEach(cardId => {
         const timeId = getTimeIdFromCardIdDateString(cardId, dateString);
-        const time = times[timeId];
-        const value = time || 0;
+        const value = getFloatFromString(times[timeId]);
 
         if (!totals.days[dateString]) totals.days[dateString] = 0;
         if (!totals.cards[cardId]) totals.cards[cardId] = 0;
