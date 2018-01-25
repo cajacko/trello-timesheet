@@ -8,11 +8,15 @@ class CardDay extends PureComponent {
   constructor(props) {
     super(props);
 
+    this.state = { value: this.getValue(props) };
+
     this.onTimeChange = this.onTimeChange.bind(this);
   }
 
   componentDidMount() {
-    const { cardId, dateString } = this.props;
+    const { cardId, dateString, updateTotals } = this.props;
+
+    updateTotals(cardId, dateString, this.state.value);
 
     const timeId = getTimeIdFromCardIdDateString(cardId, dateString);
 
@@ -23,20 +27,32 @@ class CardDay extends PureComponent {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    const value = this.getValue(nextProps);
+
+    if (value !== this.state.value) {
+      this.setState({ value });
+      this.props.updateTotals(this.props.cardId, this.props.dateString, value);
+    }
+  }
+
+  componentWillUnMount() {
+    this.props.removeFromTotals(this.props.cardId, this.props.dateString);
+  }
+
+  getValue({ changedTime, savedTime }) {
+    return changedTime === undefined ? savedTime : changedTime;
+  }
+
   onTimeChange(event) {
     this.props.onTimeChange(event.target.value);
   }
 
   render() {
-    const value =
-      this.props.changedTime === undefined
-        ? this.props.savedTime
-        : this.props.changedTime;
-
     return (
       <div className="col d-flex justify-content-center">
         <input
-          value={value || ''}
+          value={this.state.value || ''}
           className="form-control form-control-sm"
           style={{ maxWidth: 50 }}
           onChange={this.onTimeChange}

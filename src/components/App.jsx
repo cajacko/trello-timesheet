@@ -1,15 +1,82 @@
 import React, { PureComponent } from 'react';
+import cloneDeep from 'lodash/fp/cloneDeep';
 import isEqual from 'lodash/fp/isEqual';
+import { setTimes } from 'src/helpers/times';
+import getTimeIdFromCardIdDateString from 'src/helpers/getTimeIdFromCardIdDateString';
 import { connect } from 'react-redux';
 import Card from 'src/components/Card';
+import getTotal from 'src/helpers/getTotal';
 
 class App extends PureComponent {
   constructor(props) {
     super(props);
+
+    this.defaultTotals = {
+      days: {},
+      cards: {},
+      week: null,
+    };
+
+    this.totals = {
+      times: {},
+      datesByCard: {},
+      cardsByDate: {},
+    };
+
+    this.lastSetTotals = null;
+
+    this.state = { totals: this.defaultTotals };
+
+    this.updateTotals = this.updateTotals.bind(this);
+    this.removeFromTotals = this.removeFromTotals.bind(this);
   }
 
   componentDidMount() {
     this.props.getSuggestions(this.props.days[0].date);
+  }
+
+  updateTotals(cardId, dateString, value) {
+    const timeId = getTimeIdFromCardIdDateString(cardId, dateString);
+    this.totals = setTimes(this.totals, timeId, cardId, dateString, value);
+
+    this.setTotals();
+  }
+
+  removeFromTotals(cardId, dateString) {
+    const timeId = getTimeIdFromCardIdDateString(cardId, dateString);
+    this.totals = removeTimes(this.totals, timeId, cardId, dateString);
+
+    this.setTotals();
+  }
+
+  setTotals() {
+    // TODO: Only run once every x ms
+
+    const { cardsByDate, times } = this.totals;
+
+    const totals = cloneDeep(this.defaultTotals);
+
+    Object.keys(cardsByDate).forEach(dateString => {
+      const cards = cardsByDate[dateString];
+
+      Object.keys(cards).forEach(cardId => {
+        const timeId = getTimeIdFromCardIdDateString(cardId, dateString);
+        const time = times[timeId];
+        const value = time || 0;
+
+        if (!totals.days[dateString]) totals.days[dateString] = 0;
+        if (!totals.cards[cardId]) totals.cards[cardId] = 0;
+        if (!totals.week) totals.week = 0;
+
+        totals.days[dateString] += value;
+        totals.cards[cardId] += value;
+        totals.week += value;
+      });
+    });
+
+    if (isEqual(this.state.totals, totals)) return;
+
+    this.setState({ totals });
   }
 
   render() {
@@ -29,7 +96,6 @@ class App extends PureComponent {
               </div>
             ))}
             <div className="col small">Total this week</div>
-            <div className="col small">Total all time</div>
           </header>
 
           {this.props.cards ? (
@@ -38,7 +104,14 @@ class App extends PureComponent {
                 const noBorder = i === this.props.cards.length - 1;
 
                 return (
-                  <Card key={cardId} cardId={cardId} noBorder={noBorder} />
+                  <Card
+                    key={cardId}
+                    cardId={cardId}
+                    noBorder={noBorder}
+                    updateTotals={this.updateTotals}
+                    removeFromTotals={this.removeFromTotals}
+                    total={getTotal(this.state.totals, 'cards', cardId)}
+                  />
                 );
               })}
             </ul>
@@ -50,11 +123,10 @@ class App extends PureComponent {
             <div className="col-3 text-left">Totals</div>
             {this.props.days.map(({ dateString }) => (
               <div key={dateString} className="col">
-                0
+                {getTotal(this.state.totals, 'days', dateString)}
               </div>
             ))}
-            <div className="col">5</div>
-            <div className="col">24</div>
+            <div className="col">{getTotal(this.state.totals, 'week')}</div>
           </footer>
         </section>
 

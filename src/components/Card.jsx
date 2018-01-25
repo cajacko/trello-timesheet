@@ -25,10 +25,11 @@ class Card extends PureComponent {
             key={dateString}
             cardId={this.props.cardId}
             dateString={dateString}
+            updateTotals={this.props.updateTotals}
+            removeFromTotals={this.props.removeFromTotals}
           />
         ))}
-        <div className="col">5</div>
-        <div className="col">24</div>
+        <div className="col">{this.props.total}</div>
       </li>
     );
   }

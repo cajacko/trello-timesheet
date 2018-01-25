@@ -1,5 +1,6 @@
 import cloneDeep from 'lodash/fp/cloneDeep';
 import getTimeIdFromCardIdDateString from 'src/helpers/getTimeIdFromCardIdDateString';
+import { setTimes } from 'src/helpers/times';
 
 const defaultState = {
   times: {},
@@ -11,20 +12,6 @@ const defaultState = {
     cardsByDate: {},
   },
 };
-
-function setTimes(state, timeId, cardId, dateString, value) {
-  const newState = cloneDeep(state);
-
-  newState.times[timeId] = value;
-
-  if (!newState.datesByCard[cardId]) newState.datesByCard[cardId] = {};
-  if (!newState.cardsByDate[dateString]) newState.cardsByDate[dateString] = {};
-
-  newState.datesByCard[cardId][dateString] = true;
-  newState.cardsByDate[dateString][cardId] = true;
-
-  return newState;
-}
 
 export default (state = defaultState, { type, payload }) => {
   switch (type) {
