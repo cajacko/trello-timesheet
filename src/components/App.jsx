@@ -122,8 +122,9 @@ class App extends PureComponent {
           <header className="row border-bottom pb-3 text-center">
             <div className="col-3 text-left small">Card</div>
             {this.props.days.map(({ day, dateString }) => (
-              <div key={dateString} className="col small">
-                {day} - {dateString}
+              <div key={dateString} className="col d-flex flex-column">
+                <span className="small">{day}</span>{' '}
+                <span style={{ fontSize: '0.7rem' }}>{dateString}</span>
               </div>
             ))}
             <div className="col small">Total this week</div>
