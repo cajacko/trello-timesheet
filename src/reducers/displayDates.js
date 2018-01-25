@@ -2,7 +2,10 @@ import getDateStringFromDate from 'src/helpers/getDateStringFromDate';
 import getAllDatesFromStart from 'src/helpers/getAllDatesFromStart';
 
 const date = new Date();
-date.setDate(date.getDate() - 6);
+
+while (date.getDay() !== 1) {
+  date.setDate(date.getDate() - 1);
+}
 
 const defaultState = getAllDatesFromStart(date);
 
