@@ -112,14 +112,17 @@ class App extends PureComponent {
       return <p>Error, check console and reload</p>;
 
     return (
-      <main className="container-fluid pt-4 pb-4">
-        <header className="container-fluid mb-4 d-flex justify-content-end">
-          <button className="btn btn-info btn-sm">Previous week</button>
-          <button className="btn btn-info ml-4 btn-sm">Next week</button>
-        </header>
+      <main
+        className="flex-column pt-4 pb-4 d-flex"
+        style={{ width: '100vw', height: '100vh' }}
+      >
+        <header className="container-fluid border-bottom pb-3">
+          <div className="mb-4 d-flex justify-content-end">
+            <button className="btn btn-info btn-sm">Previous week</button>
+            <button className="btn btn-info ml-4 btn-sm">Next week</button>
+          </div>
 
-        <section className="container-fluid">
-          <header className="row border-bottom pb-3 text-center">
+          <div className="row  text-center">
             <div className="col-3 text-left small">Card</div>
             {this.props.days.map(({ day, dateString }) => (
               <div key={dateString} className="col d-flex flex-column">
@@ -128,8 +131,10 @@ class App extends PureComponent {
               </div>
             ))}
             <div className="col small">Total this week</div>
-          </header>
+          </div>
+        </header>
 
+        <div style={{ overflow: 'auto', flex: 1 }}>
           {this.props.cards ? (
             <ul style={{ paddingLeft: 0 }} className="text-center">
               {this.props.cards.map((cardId, i) => {
@@ -150,8 +155,10 @@ class App extends PureComponent {
           ) : (
             <div>Loading</div>
           )}
+        </div>
 
-          <footer className="row border-top pt-3 text-center">
+        <footer className="container-fluid border-top pt-3">
+          <div className="row text-center">
             <div className="col-3 text-left">Totals</div>
             {this.props.days.map(({ dateString }) => (
               <div key={dateString} className="col">
@@ -159,13 +166,10 @@ class App extends PureComponent {
               </div>
             ))}
             <div className="col">{getTotal(this.state.totals, 'week')}</div>
-          </footer>
-        </section>
+          </div>
 
-        <footer className="container-fluid row mt-5">
-          <AddCard />
-
-          <div className="col d-flex justify-content-end align-items-end pb-1">
+          <div className="d-flex justify-content-between pt-3">
+            <AddCard />
             <button
               className="btn btn-success"
               onClick={this.props.saveChanges}
