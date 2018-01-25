@@ -22,11 +22,13 @@ class Database {
   listenTo(ref, callback) {
     console.log('listenTo', ref);
 
-    this.database()
-      .ref(ref)
-      .on('value', function(snapshot) {
-        callback(snapshot.val());
-      });
+    const parent = this.database().ref(ref);
+
+    parent.on('value', function(snapshot) {
+      callback(snapshot.val());
+    });
+
+    return parent;
   }
 
   getOnce(ref) {

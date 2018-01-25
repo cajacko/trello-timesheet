@@ -20,11 +20,15 @@ class CardDay extends PureComponent {
 
     const timeId = getTimeIdFromCardIdDateString(cardId, dateString);
 
-    databaseDispatcher(`times/${timeId}`, 'SET_TIME', {
+    this.listener = databaseDispatcher(`times/${timeId}`, 'SET_TIME', {
       cardId,
       dateString,
       timeId,
     });
+  }
+
+  componentWillUnMount() {
+    if (this.listener && this.listener.off) this.listener.off();
   }
 
   componentWillReceiveProps(nextProps) {

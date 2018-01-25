@@ -4,14 +4,10 @@ import store from 'src/store';
 const { dispatch } = store;
 
 function databaseDispatcher(ref, action, props) {
-  return new Promise(resolve => {
-    database.listenTo(ref, value => {
-      dispatch({
-        type: action,
-        payload: { props, value },
-      });
-
-      resolve();
+  return database.listenTo(ref, value => {
+    dispatch({
+      type: action,
+      payload: { props, value },
     });
   });
 }
