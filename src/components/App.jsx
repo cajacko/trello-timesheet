@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
+import isEqual from 'lodash/fp/isEqual';
 import { connect } from 'react-redux';
 import Card from 'src/components/Card';
 
-class App extends Component {
+class App extends PureComponent {
   constructor(props) {
     super(props);
   }

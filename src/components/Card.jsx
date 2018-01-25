@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import CardDay from 'src/components/CardDay';
 
-class Card extends Component {
+class Card extends PureComponent {
   constructor(props) {
     super(props);
   }

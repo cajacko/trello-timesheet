@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { cards } from 'src/helpers/modules';
 import getTimeIdFromCardIdDateString from 'src/helpers/getTimeIdFromCardIdDateString';
 import databaseDispatcher from 'src/helpers/databaseDispatcher';
 
-class CardDay extends Component {
+class CardDay extends PureComponent {
   constructor(props) {
     super(props);
 
