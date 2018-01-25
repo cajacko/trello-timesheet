@@ -182,12 +182,17 @@ class App extends PureComponent {
 
           <div className="d-flex justify-content-between pt-3">
             <AddCard />
-            <button
-              className="btn btn-success"
-              onClick={this.props.saveChanges}
-            >
-              Save Changes
-            </button>
+            <div>
+              <button
+                className={`btn btn-${
+                  this.props.saveStatus === 'FAILED' ? 'danger' : 'success'
+                }`}
+                onClick={this.props.saveChanges}
+                disabled={this.props.saveStatus === 'LOADING'}
+              >
+                Save Changes
+              </button>
+            </div>
           </div>
         </footer>
       </main>
@@ -215,6 +220,7 @@ const mapStateToProps = ({
     initStatus: status.init,
     suggestionsStatus: status.suggestions[displayDates[0].dateString],
     trelloStatus: status.trello,
+    saveStatus: status.saving,
   };
 };
 
