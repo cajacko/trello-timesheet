@@ -42,6 +42,12 @@ class App extends PureComponent {
       nextProps.initStatus === 'SUCCEEDED'
     ) {
       this.props.getSuggestions(nextProps.days[0].date);
+
+      setInterval(() => {
+        if (this.props.trelloStatus === 'SUCCEEDED') {
+          this.props.updateTrello();
+        }
+      }, 10000);
     }
   }
 
@@ -157,13 +163,13 @@ class App extends PureComponent {
         <footer className="container-fluid row mt-5">
           <div className="col">
             <div className="form-group">
-              <label>Add a card, search by card name or id</label>
+              <label>Add a card, search by card name</label>
 
               <div className="input-group mb-3">
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Card name or id"
+                  placeholder="Card name"
                 />
                 <div className="input-group-append">
                   <button className="btn btn-outline-secondary" type="button">
@@ -193,6 +199,7 @@ const mapStateToProps = ({ displayDates, cardsPerWeek, status }) => ({
   days: displayDates,
   initStatus: status.init,
   suggestionsStauts: status.suggestions[displayDates[0].dateString],
+  trelloStatus: status.trello,
 });
 
 const mapDispatchToProps = dispatch => ({
