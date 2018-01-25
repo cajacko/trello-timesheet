@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash/fp/cloneDeep';
 import getTimeIdFromCardIdDateString from 'src/helpers/getTimeIdFromCardIdDateString';
-import { setTimes } from 'src/helpers/times';
+import { setTimes, removeTimes } from 'src/helpers/times';
 
 const defaultState = {
   times: {},
@@ -18,6 +18,10 @@ export default (state = defaultState, { type, payload }) => {
     case 'SET_TIME': {
       const { props, value } = payload;
       const { timeId, cardId, dateString } = props;
+
+      if (value === undefined || value === null) {
+        return removeTimes(state, timeId, cardId, dateString);
+      }
 
       return setTimes(state, timeId, cardId, dateString, value);
     }

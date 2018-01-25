@@ -12,6 +12,17 @@ export default (state = {}, { type, payload }) => {
       return newState;
     }
 
+    case 'SET_CARD': {
+      const newState = cloneDeep(state);
+      const { value } = payload;
+
+      if (value) {
+        newState[value.id] = value;
+      }
+
+      return newState;
+    }
+
     default:
       return state;
   }

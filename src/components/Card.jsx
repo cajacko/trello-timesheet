@@ -1,10 +1,22 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import CardDay from 'src/components/CardDay';
+import databaseDispatcher from 'src/helpers/databaseDispatcher';
 
 class Card extends PureComponent {
   constructor(props) {
     super(props);
+  }
+
+  componentDidMount() {
+    this.listener = databaseDispatcher(
+      `/cards/${this.props.cardId}`,
+      'SET_CARD',
+    );
+  }
+
+  componentWillUnMount() {
+    if (this.listener && this.listener.off) this.listener.off();
   }
 
   render() {

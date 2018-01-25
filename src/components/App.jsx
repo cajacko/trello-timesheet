@@ -3,6 +3,7 @@ import cloneDeep from 'lodash/fp/cloneDeep';
 import isEqual from 'lodash/fp/isEqual';
 import { setTimes } from 'src/helpers/times';
 import getTimeIdFromCardIdDateString from 'src/helpers/getTimeIdFromCardIdDateString';
+import getDateStringFromDate from 'src/helpers/getDateStringFromDate';
 import { connect } from 'react-redux';
 import Card from 'src/components/Card';
 import getTotal from 'src/helpers/getTotal';
@@ -32,7 +33,16 @@ class App extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.getSuggestions(this.props.days[0].date);
+    this.props.updateTrello();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (
+      this.props.initStatus === 'REQUESTED' &&
+      nextProps.initStatus === 'SUCCEEDED'
+    ) {
+      this.props.getSuggestions(nextProps.days[0].date);
+    }
   }
 
   updateTotals(cardId, dateString, value) {
@@ -80,6 +90,20 @@ class App extends PureComponent {
   }
 
   render() {
+    if (
+      this.props.initStatus === 'REQUESTED' ||
+      !this.props.suggestionsStauts ||
+      this.props.suggestionsStauts === 'REQUESTED'
+    ) {
+      return <p>Loading</p>;
+    }
+
+    if (
+      this.props.initStatus === 'FAILED' ||
+      this.props.suggestionsStauts === 'FAILED'
+    )
+      return <p>Error, check console and reload</p>;
+
     return (
       <main className="container-fluid pt-4 pb-4">
         <header className="container-fluid mb-4 d-flex justify-content-end">
@@ -164,15 +188,18 @@ class App extends PureComponent {
   }
 }
 
-const mapStateToProps = ({ displayDates, cardsPerWeek }) => ({
+const mapStateToProps = ({ displayDates, cardsPerWeek, status }) => ({
   cards: cardsPerWeek[displayDates[0].dateString] || [],
   days: displayDates,
+  initStatus: status.init,
+  suggestionsStauts: status.suggestions[displayDates[0].dateString],
 });
 
 const mapDispatchToProps = dispatch => ({
   getSuggestions: date =>
     dispatch({ type: 'GET_SUGGESTIONS_REQUESTED', payload: date }),
   saveChanges: () => dispatch({ type: 'SAVE_CHANGES_REQUESTED' }),
+  updateTrello: () => dispatch({ type: 'UPDATE_TRELLO_REQUESTED' }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

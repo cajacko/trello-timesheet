@@ -17,6 +17,7 @@ class Cards {
     this.setCards = this.setCards.bind(this);
     this.getSuggestions = this.getSuggestions.bind(this);
     this.saveChanges = this.saveChanges.bind(this);
+    this.updateCardsInDatabase = this.updateCardsInDatabase.bind(this);
   }
 
   updateCardsInDatabase() {

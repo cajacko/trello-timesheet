@@ -11,7 +11,10 @@ function* getSuggestions({ payload }) {
     });
   } catch (e) {
     console.error(e);
-    yield put({ type: 'GET_SUGGESTIONS_FAILED', payload: e });
+    yield put({
+      type: 'GET_SUGGESTIONS_FAILED',
+      payload: { error, date: payload },
+    });
   }
 }
 
@@ -27,9 +30,22 @@ function* saveChanges() {
   }
 }
 
+function* updateTrello() {
+  try {
+    yield call(cards.updateCardsInDatabase);
+    yield put({
+      type: 'UPDATE_TRELLO_SUCCEEDED',
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({ type: 'UPDATE_TRELLO_FAILED', payload: e });
+  }
+}
+
 function* sagas() {
   yield takeEvery('GET_SUGGESTIONS_REQUESTED', getSuggestions);
   yield takeEvery('SAVE_CHANGES_REQUESTED', saveChanges);
+  yield takeEvery('UPDATE_TRELLO_REQUESTED', updateTrello);
 }
 
 export default sagas;
