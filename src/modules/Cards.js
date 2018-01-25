@@ -1,9 +1,12 @@
 import Trello from 'src/modules/Trello';
 import Database from 'src/modules/Database';
+import getAllDatesFromStart from 'src/helpers/getAllDatesFromStart';
 
 class Cards {
   constructor(trello, database) {
     console.log('Cards - constructor');
+
+    this.cardCache = {};
 
     if (!(trello instanceof Trello))
       throw new Error('Cards expects and instance of Trello');
@@ -20,6 +23,7 @@ class Cards {
     this.updateCardsInDatabase = this.updateCardsInDatabase.bind(this);
     this.search = this.search.bind(this);
     this.getCard = this.getCard.bind(this);
+    this.clearCache = this.clearCache.bind(this);
   }
 
   updateCardsInDatabase() {
@@ -60,12 +64,64 @@ class Cards {
     return Promise.all(promises);
   }
 
-  getSuggestions() {
+  getSuggestions(date) {
     console.log('Cards - getSuggestions');
+    const days = getAllDatesFromStart(date).map(({ dateString }) => dateString);
 
-    return this.database
-      .getCards()
-      .then(cards => Object.keys(cards).map(id => cards[id]));
+    const promises = [];
+
+    promises.push(this.getCardsOnDates(days));
+
+    promises.push(
+      this.database
+        .getCards()
+        .then(cards => Object.keys(cards).map(id => cards[id])),
+    );
+
+    return Promise.all(promises)
+      .then(results => {
+        const cardIds = {};
+        const cardsArr = [];
+
+        const addCards = card => {
+          if (cardIds[card.id]) return;
+
+          cardsArr.push(card);
+          cardIds[card.id] = true;
+        };
+
+        results[0].forEach(cards => {
+          if (cards) {
+            cards.forEach(addCards);
+          }
+        });
+
+        results[1].forEach(addCards);
+
+        return cardsArr;
+      })
+      .then(this.clearCache);
+  }
+
+  getCardsOnDates(dates) {
+    const promises = dates.map(dateString => {
+      return this.database
+        .getOnce(`/cardsByDate/${dateString}`)
+        .then(
+          cards =>
+            cards &&
+            Promise.all(
+              Object.keys(cards).map(cardId => this.getCard(cardId, true)),
+            ),
+        );
+    });
+
+    return Promise.all(promises);
+  }
+
+  clearCache(response) {
+    this.cardCache = {};
+    return response;
   }
 
   saveChanges(changes) {
@@ -83,8 +139,15 @@ class Cards {
     this.database.searchCardsByName(searchText, callback);
   }
 
-  getCard(cardId) {
-    return this.database.getOnce(`/cards/${cardId}`);
+  getCard(cardId, useCache) {
+    if (useCache && this.cardCache[cardId])
+      return Promise.resolve(this.cardCache[id]);
+
+    return this.database.getOnce(`/cards/${cardId}`).then(card => {
+      if (useCache) this.cardCache[cardId] = card;
+
+      return card;
+    });
   }
 }
 
