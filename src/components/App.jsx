@@ -7,6 +7,7 @@ import getDateStringFromDate from 'src/helpers/getDateStringFromDate';
 import { connect } from 'react-redux';
 import Card from 'src/components/Card';
 import getTotal from 'src/helpers/getTotal';
+import AddCard from 'src/components/AddCard';
 
 class App extends PureComponent {
   constructor(props) {
@@ -161,24 +162,7 @@ class App extends PureComponent {
         </section>
 
         <footer className="container-fluid row mt-5">
-          <div className="col">
-            <div className="form-group">
-              <label>Add a card, search by card name</label>
-
-              <div className="input-group mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Card name"
-                />
-                <div className="input-group-append">
-                  <button className="btn btn-outline-secondary" type="button">
-                    Add entry
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <AddCard />
 
           <div className="col d-flex justify-content-end align-items-end pb-1">
             <button

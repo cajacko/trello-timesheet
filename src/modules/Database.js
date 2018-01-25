@@ -53,6 +53,8 @@ class Database {
   }
 
   getCards(orderBy = 'dateLastActivity', limit = 10) {
+    console.log('Database - getCards', orderBy, limit);
+
     return this.database()
       .ref('/cards')
       .orderByChild(orderBy)
@@ -93,6 +95,49 @@ class Database {
     return this.database()
       .ref()
       .update(updates);
+  }
+
+  searchCardsByName(searchText, callback) {
+    console.log('Database - searchCardsByName', searchText);
+    let carryOn = true;
+    let i = 0;
+    const returnedIds = {};
+
+    const search = () => {
+      i += 1;
+      const limit = 100 * i;
+
+      return this.getCards('dateLastActivity', limit).then(cards => {
+        const filteredCards = [];
+
+        const cardIds = Object.keys(cards);
+
+        cardIds.forEach(cardId => {
+          if (returnedIds[cardId]) return;
+
+          const card = cards[cardId];
+
+          if (
+            searchText === '' ||
+            !searchText ||
+            card.name.toLowerCase().includes(searchText.toLowerCase())
+          ) {
+            returnedIds[cardId] = true;
+            filteredCards.push(card);
+          }
+        });
+
+        carryOn = callback(filteredCards);
+
+        if (cardIds.length < limit) carryOn = false;
+
+        if (carryOn) {
+          return search();
+        }
+      });
+    };
+
+    search();
   }
 }
 

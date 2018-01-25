@@ -18,6 +18,7 @@ class Cards {
     this.getSuggestions = this.getSuggestions.bind(this);
     this.saveChanges = this.saveChanges.bind(this);
     this.updateCardsInDatabase = this.updateCardsInDatabase.bind(this);
+    this.search = this.search.bind(this);
   }
 
   updateCardsInDatabase() {
@@ -75,6 +76,10 @@ class Cards {
     const timeId = `${id}-${date}`;
 
     return this.database.getTime(timeId);
+  }
+
+  search(searchText, callback) {
+    this.database.searchCardsByName(searchText, callback);
   }
 }
 
