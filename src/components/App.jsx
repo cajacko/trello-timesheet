@@ -178,13 +178,28 @@ class App extends PureComponent {
   }
 }
 
-const mapStateToProps = ({ displayDates, cardsPerWeek, status }) => ({
-  cards: cardsPerWeek[displayDates[0].dateString] || [],
-  days: displayDates,
-  initStatus: status.init,
-  suggestionsStauts: status.suggestions[displayDates[0].dateString],
-  trelloStatus: status.trello,
-});
+const mapStateToProps = ({
+  displayDates,
+  cardsPerWeek,
+  status,
+  addedCards,
+}) => {
+  const cards = cardsPerWeek[displayDates[0].dateString] || [];
+
+  addedCards.forEach(id => {
+    if (!cards.includes(id)) {
+      cards.push(id);
+    }
+  });
+
+  return {
+    cards,
+    days: displayDates,
+    initStatus: status.init,
+    suggestionsStauts: status.suggestions[displayDates[0].dateString],
+    trelloStatus: status.trello,
+  };
+};
 
 const mapDispatchToProps = dispatch => ({
   getSuggestions: date =>

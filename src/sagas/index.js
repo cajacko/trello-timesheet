@@ -42,10 +42,27 @@ function* updateTrello() {
   }
 }
 
+function* addCard({ payload }) {
+  try {
+    const card = yield call(cards.getCard, payload);
+    yield put({
+      type: 'ADD_CARD_SUCCEEDED',
+      payload: card,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: 'ADD_CARD_FAILED',
+      payload: e,
+    });
+  }
+}
+
 function* sagas() {
   yield takeEvery('GET_SUGGESTIONS_REQUESTED', getSuggestions);
   yield takeEvery('SAVE_CHANGES_REQUESTED', saveChanges);
   yield takeEvery('UPDATE_TRELLO_REQUESTED', updateTrello);
+  yield takeEvery('ADD_CARD_REQUESTED', addCard);
 }
 
 export default sagas;

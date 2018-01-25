@@ -4,6 +4,7 @@ import times from 'src/reducers/times';
 import cardsPerWeek from 'src/reducers/cardsPerWeek';
 import displayDates from 'src/reducers/displayDates';
 import status from 'src/reducers/status';
+import addedCards from 'src/reducers/addedCards';
 
 export default combineReducers({
   cards,
@@ -11,4 +12,5 @@ export default combineReducers({
   cardsPerWeek,
   displayDates,
   status,
+  addedCards,
 });

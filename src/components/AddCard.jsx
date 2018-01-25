@@ -7,9 +7,10 @@ class AddCard extends PureComponent {
     super(props);
 
     this.cards = [];
-    this.state = { cards: [], searchText: '', selected: null };
+    this.state = { cards: [], searchText: '' };
 
     this.onChange = this.onChange.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   onChange(event) {
@@ -23,6 +24,7 @@ class AddCard extends PureComponent {
     cards.search(searchText, results => {
       if (this.state.searchText === searchText) {
         const newCards = results.map(({ id, name }) => ({ id, name }));
+
         const allCards = this.cards.concat(newCards);
 
         this.cards = allCards;
@@ -34,9 +36,11 @@ class AddCard extends PureComponent {
     });
   }
 
-  onClick() {}
+  onClick(event, id) {
+    event.preventDefault();
 
-  add() {}
+    this.props.addCard(id);
+  }
 
   render() {
     return (
@@ -74,13 +78,13 @@ class AddCard extends PureComponent {
                 </button>
               </div>
               <div className="modal-body">
-                <div className="htmlForm-group">
+                <div className="form-group">
                   <label htmlFor="exampleInputEmail1">
                     Search by card name
                   </label>
                   <input
                     type="email"
-                    className="htmlForm-control"
+                    className="form-control"
                     id="exampleInputEmail1"
                     aria-describedby="emailHelp"
                     placeholder="Card name"
@@ -94,6 +98,7 @@ class AddCard extends PureComponent {
                     <button
                       key={id}
                       type="button"
+                      data-dismiss="modal"
                       className={`list-group-item list-group-item-action ${
                         this.state.selected === id ? 'active' : ''
                       }`}
@@ -103,23 +108,6 @@ class AddCard extends PureComponent {
                     </button>
                   ))}
                 </div>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-info"
-                  onClick={this.add}
-                  disabled={!this.props.selected}
-                >
-                  Save changes
-                </button>
               </div>
             </div>
           </div>
@@ -133,6 +121,8 @@ const mapStateToProps = () => {
   return {};
 };
 
-const mapDispatchToProps = (dispatch, { cardId, dateString }) => ({});
+const mapDispatchToProps = dispatch => ({
+  addCard: id => dispatch({ type: 'ADD_CARD_REQUESTED', payload: id }),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddCard);

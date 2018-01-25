@@ -23,6 +23,12 @@ export default (state = {}, { type, payload }) => {
       return newState;
     }
 
+    case 'ADD_CARD_SUCCEEDED': {
+      const newState = cloneDeep(state);
+      newState[payload.id] = payload;
+      return newState;
+    }
+
     default:
       return state;
   }

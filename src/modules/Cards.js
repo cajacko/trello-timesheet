@@ -19,6 +19,7 @@ class Cards {
     this.saveChanges = this.saveChanges.bind(this);
     this.updateCardsInDatabase = this.updateCardsInDatabase.bind(this);
     this.search = this.search.bind(this);
+    this.getCard = this.getCard.bind(this);
   }
 
   updateCardsInDatabase() {
@@ -80,6 +81,10 @@ class Cards {
 
   search(searchText, callback) {
     this.database.searchCardsByName(searchText, callback);
+  }
+
+  getCard(cardId) {
+    return this.database.getOnce(`/cards/${cardId}`);
   }
 }
 
