@@ -15,7 +15,8 @@ class Cards {
     this.database = database;
 
     this.setCards = this.setCards.bind(this);
-    this.saveTimes = this.saveTimes.bind(this);
+    this.getSuggestions = this.getSuggestions.bind(this);
+    this.saveChanges = this.saveChanges.bind(this);
   }
 
   updateCardsInDatabase() {
@@ -64,8 +65,9 @@ class Cards {
       .then(cards => Object.keys(cards).map(id => cards[id]));
   }
 
-  saveTimes(times) {
-    return this.database.updateCardTimes(times);
+  saveChanges(changes) {
+    console.log('Cards - saveChanges', changes);
+    return this.database.updateCardTimes(changes);
   }
 
   getCardDateTime(id, date) {

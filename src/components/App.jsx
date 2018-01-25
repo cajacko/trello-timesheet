@@ -1,43 +1,14 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Card from 'src/components/Card';
-import { cards } from 'src/helpers/modules';
 
 class App extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      cards: [],
-      changes: {},
-    };
-
-    this.onTimeChange = this.onTimeChange.bind(this);
-    this.saveChanges = this.saveChanges.bind(this);
   }
 
   componentDidMount() {
-    cards.getSuggestions().then(cards => {
-      console.warn(cards);
-      this.setState({ cards });
-    });
-  }
-
-  saveChanges(event) {
-    event.preventDefault();
-
-    console.warn('click');
-
-    cards.saveTimes(this.state.changes);
-  }
-
-  onTimeChange(id, date, value) {
-    const changes = Object.assign({}, this.state.changes);
-
-    if (!changes[id]) changes[id] = {};
-
-    changes[id][date] = value;
-
-    this.setState({ changes });
+    this.props.getSuggestions(this.props.days[0].date);
   }
 
   render() {
@@ -51,33 +22,22 @@ class App extends Component {
         <section className="container-fluid">
           <header className="row border-bottom pb-3 text-center">
             <div className="col-3 text-left small">Card</div>
-            <div className="col small">Monday</div>
-            <div className="col small">Tuesday</div>
-            <div className="col small">Wednesday</div>
-            <div className="col small">Thursday</div>
-            <div className="col small">Friday</div>
-            <div className="col small">Saturday</div>
-            <div className="col small">Sunday</div>
+            {this.props.days.map(({ day, dateString }) => (
+              <div key={dateString} className="col small">
+                {day} - {dateString}
+              </div>
+            ))}
             <div className="col small">Total this week</div>
             <div className="col small">Total all time</div>
           </header>
 
-          {this.state.cards ? (
+          {this.props.cards ? (
             <ul style={{ paddingLeft: 0 }} className="text-center">
-              {this.state.cards.map(({ id, shortLink, name }, i) => {
-                const noBorder = i === this.state.cards.length - 1;
-                let changes = this.state.changes[id] || {};
+              {this.props.cards.map((cardId, i) => {
+                const noBorder = i === this.props.cards.length - 1;
 
                 return (
-                  <Card
-                    key={id}
-                    id={id}
-                    shortLink={shortLink}
-                    name={name}
-                    noBorder={noBorder}
-                    changes={changes}
-                    onTimeChange={this.onTimeChange}
-                  />
+                  <Card key={cardId} cardId={cardId} noBorder={noBorder} />
                 );
               })}
             </ul>
@@ -87,13 +47,11 @@ class App extends Component {
 
           <footer className="row border-top pt-3 text-center">
             <div className="col-3 text-left">Totals</div>
-            <div className="col">0</div>
-            <div className="col">0</div>
-            <div className="col">2</div>
-            <div className="col">3</div>
-            <div className="col">0</div>
-            <div className="col">0</div>
-            <div className="col">0</div>
+            {this.props.days.map(({ dateString }) => (
+              <div key={dateString} className="col">
+                0
+              </div>
+            ))}
             <div className="col">5</div>
             <div className="col">24</div>
           </footer>
@@ -120,7 +78,10 @@ class App extends Component {
           </div>
 
           <div className="col d-flex justify-content-end align-items-end pb-1">
-            <button className="btn btn-success" onClick={this.saveChanges}>
+            <button
+              className="btn btn-success"
+              onClick={this.props.saveChanges}
+            >
               Save Changes
             </button>
           </div>
@@ -130,4 +91,15 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = ({ displayDates, cardsPerWeek }) => ({
+  cards: cardsPerWeek[displayDates[0].dateString] || [],
+  days: displayDates,
+});
+
+const mapDispatchToProps = dispatch => ({
+  getSuggestions: date =>
+    dispatch({ type: 'GET_SUGGESTIONS_REQUESTED', payload: date }),
+  saveChanges: () => dispatch({ type: 'SAVE_CHANGES_REQUESTED' }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

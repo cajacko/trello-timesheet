@@ -19,6 +19,16 @@ class Database {
       .set(data);
   }
 
+  listenTo(ref, callback) {
+    console.log('listenTo', ref);
+
+    this.database()
+      .ref(ref)
+      .on('value', function(snapshot) {
+        callback(snapshot.val());
+      });
+  }
+
   getOnce(ref) {
     console.log('Database - getOnce', ref);
 
@@ -53,30 +63,30 @@ class Database {
     return this.getOnce(`/times/${id}`).then(time => (time ? time.time : null));
   }
 
-  updateCardTimes(times) {
-    console.warn(times);
+  updateCardTimes({ times, datesByCard, cardsByDate }) {
+    console.log('Database - updateCardTimes', times, datesByCard, cardsByDate);
 
     var updates = {};
 
-    Object.keys(times).forEach(cardId => {
-      const dates = times[cardId];
+    Object.keys(times).forEach(timeId => {
+      updates[`/times/${timeId}`] = times[timeId];
+    });
 
-      Object.keys(dates).forEach(date => {
-        const time = dates[date];
-        const cardDateId = `${cardId}-${date}`;
+    Object.keys(datesByCard).forEach(cardId => {
+      const times = datesByCard[cardId];
 
-        updates[`/times/${cardDateId}`] = {
-          cardId,
-          date,
-          time,
-        };
-
-        updates[`/timesByCard/${cardId}/${cardDateId}`] = true;
-        updates[`/timesByDate/${date}/${cardDateId}`] = true;
+      Object.keys(times).forEach(dateString => {
+        updates[`/datesByCard/${cardId}/${dateString}`] = true;
       });
     });
 
-    console.warn(updates);
+    Object.keys(cardsByDate).forEach(dateString => {
+      const times = cardsByDate[dateString];
+
+      Object.keys(times).forEach(cardId => {
+        updates[`/cardsByDate/${dateString}/${cardId}`] = true;
+      });
+    });
 
     return this.database()
       .ref()

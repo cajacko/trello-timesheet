@@ -11,4 +11,4 @@ const database = new Database(process.env.DATABASE_URL);
 
 const cards = new Cards(trello, database);
 
-export { cards };
+export { cards, database };

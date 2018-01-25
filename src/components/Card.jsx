@@ -1,50 +1,32 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import CardDay from 'src/components/CardDay';
 
 class Card extends Component {
   constructor(props) {
     super(props);
-
-    this.onTimeChange = this.onTimeChange.bind(this);
-  }
-
-  onTimeChange(date) {
-    return value => this.props.onTimeChange(this.props.id, date, value);
   }
 
   render() {
+    if (!this.props.card) return null;
+    const { shortLink, name } = this.props.card;
+
     let classes = 'row pb-3 pt-3';
 
     if (!this.props.noBorder) classes += ' border-bottom';
 
-    const days = [
-      '2018-01-01',
-      '2018-01-02',
-      '2018-01-03',
-      '2018-01-04',
-      '2018-01-05',
-      '2018-01-06',
-      '2018-01-07',
-    ];
-
     return (
       <li className={classes}>
         <div className="col-3 text-left small">
-          #{this.props.shortLink} - {this.props.name}
+          #{shortLink} - {name}
         </div>
-        {days.map(day => {
-          const changedTime = this.props.changes[day] || null;
-
-          return (
-            <CardDay
-              id={this.props.id}
-              date={day}
-              key={`${this.props.id}-${day}`}
-              changedTime={changedTime}
-              onTimeChange={this.onTimeChange(day)}
-            />
-          );
-        })}
+        {this.props.days.map(({ dateString }) => (
+          <CardDay
+            key={dateString}
+            cardId={this.props.cardId}
+            dateString={dateString}
+          />
+        ))}
         <div className="col">5</div>
         <div className="col">24</div>
       </li>
@@ -52,4 +34,9 @@ class Card extends Component {
   }
 }
 
-export default Card;
+const mapStateToProps = ({ displayDates, cards }, { cardId }) => ({
+  card: cards[cardId] || null,
+  days: displayDates,
+});
+
+export default connect(mapStateToProps, undefined)(Card);
