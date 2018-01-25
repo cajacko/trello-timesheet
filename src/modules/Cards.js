@@ -141,7 +141,7 @@ class Cards {
 
   getCard(cardId, useCache) {
     if (useCache && this.cardCache[cardId])
-      return Promise.resolve(this.cardCache[id]);
+      return Promise.resolve(this.cardCache[cardId]);
 
     return this.database.getOnce(`/cards/${cardId}`).then(card => {
       if (useCache) this.cardCache[cardId] = card;

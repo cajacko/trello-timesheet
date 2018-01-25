@@ -49,6 +49,11 @@ class App extends PureComponent {
           this.props.updateTrello();
         }
       }, 10000);
+    } else if (
+      nextProps.initStatus === 'SUCCEEDED' &&
+      !this.props.suggestionsStatus
+    ) {
+      this.props.getSuggestions(nextProps.days[0].date);
     }
   }
 
@@ -99,15 +104,15 @@ class App extends PureComponent {
   render() {
     if (
       this.props.initStatus === 'REQUESTED' ||
-      !this.props.suggestionsStauts ||
-      this.props.suggestionsStauts === 'REQUESTED'
+      !this.props.suggestionsStatus ||
+      this.props.suggestionsStatus === 'REQUESTED'
     ) {
       return <p>Loading</p>;
     }
 
     if (
       this.props.initStatus === 'FAILED' ||
-      this.props.suggestionsStauts === 'FAILED'
+      this.props.suggestionsStatus === 'FAILED'
     )
       return <p>Error, check console and reload</p>;
 
@@ -118,8 +123,15 @@ class App extends PureComponent {
       >
         <header className="container-fluid border-bottom pb-3">
           <div className="mb-4 d-flex justify-content-end">
-            <button className="btn btn-info btn-sm">Previous week</button>
-            <button className="btn btn-info ml-4 btn-sm">Next week</button>
+            <button className="btn btn-info btn-sm" onClick={this.props.prev}>
+              Previous week
+            </button>
+            <button
+              className="btn btn-info ml-4 btn-sm"
+              onClick={this.props.next}
+            >
+              Next week
+            </button>
           </div>
 
           <div className="row  text-center">
@@ -201,7 +213,7 @@ const mapStateToProps = ({
     cards,
     days: displayDates,
     initStatus: status.init,
-    suggestionsStauts: status.suggestions[displayDates[0].dateString],
+    suggestionsStatus: status.suggestions[displayDates[0].dateString],
     trelloStatus: status.trello,
   };
 };
@@ -211,6 +223,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: 'GET_SUGGESTIONS_REQUESTED', payload: date }),
   saveChanges: () => dispatch({ type: 'SAVE_CHANGES_REQUESTED' }),
   updateTrello: () => dispatch({ type: 'UPDATE_TRELLO_REQUESTED' }),
+  prev: () => dispatch({ type: 'PREVIOUS_WEEK' }),
+  next: () => dispatch({ type: 'NEXT_WEEK' }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
