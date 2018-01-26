@@ -9,7 +9,7 @@ class CardDay extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = { value: this.getValue(props) };
+    this.state = { ...this.getValue(props) };
 
     this.onTimeChange = this.onTimeChange.bind(this);
   }
@@ -33,10 +33,10 @@ class CardDay extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const value = this.getValue(nextProps);
+    const { value, changed } = this.getValue(nextProps);
 
     if (value !== this.state.value) {
-      this.setState({ value });
+      this.setState({ value, changed });
       this.props.updateTotals(this.props.cardId, this.props.dateString, value);
     }
   }
@@ -46,7 +46,17 @@ class CardDay extends PureComponent {
   }
 
   getValue({ changedTime, savedTime }) {
-    return changedTime === undefined ? savedTime : changedTime;
+    if (changedTime === undefined) {
+      return {
+        value: savedTime,
+        changed: false,
+      };
+    }
+
+    return {
+      value: changedTime,
+      changed: true,
+    };
   }
 
   onTimeChange(event) {
@@ -59,13 +69,19 @@ class CardDay extends PureComponent {
         ? undefined
         : getFloatFromString(this.state.value);
 
+    let classes = 'form-control form-control-sm';
+
+    if (valueForServer === 0) {
+      classes += ' is-invalid';
+    } else if (this.state.changed) {
+      classes += ' is-valid';
+    }
+
     return (
       <div className="col d-flex justify-content-center">
         <input
           value={this.state.value || ''}
-          className={`form-control form-control-sm ${
-            valueForServer === 0 ? 'is-invalid' : ''
-          }`}
+          className={classes}
           style={{ maxWidth: 50 }}
           onChange={this.onTimeChange}
         />
