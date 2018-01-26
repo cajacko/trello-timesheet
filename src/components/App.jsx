@@ -47,7 +47,7 @@ class App extends PureComponent {
 
       setInterval(() => {
         if (this.props.trelloStatus === 'SUCCEEDED') {
-          this.props.updateTrello();
+          // this.props.updateTrello();
         }
       }, 10000);
     } else if (
