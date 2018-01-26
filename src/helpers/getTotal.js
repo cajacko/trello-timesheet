@@ -7,7 +7,7 @@ function getTotal(totals, prop, key) {
     total = totals[prop];
   }
 
-  return typeof total === 'number' ? total : null;
+  return typeof total === 'number' ? Math.round(total * 100) / 100 : null;
 }
 
 export default getTotal;
