@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { cards } from 'src/helpers/modules';
 import getTimeIdFromCardIdDateString from 'src/helpers/getTimeIdFromCardIdDateString';
 import databaseDispatcher from 'src/helpers/databaseDispatcher';
+import getFloatFromString from 'src/helpers/getFloatFromString';
 
 class CardDay extends PureComponent {
   constructor(props) {
@@ -53,11 +54,18 @@ class CardDay extends PureComponent {
   }
 
   render() {
+    const valueForServer =
+      this.state.value === undefined
+        ? undefined
+        : getFloatFromString(this.state.value);
+
     return (
       <div className="col d-flex justify-content-center">
         <input
           value={this.state.value || ''}
-          className="form-control form-control-sm"
+          className={`form-control form-control-sm ${
+            valueForServer === 0 ? 'is-invalid' : ''
+          }`}
           style={{ maxWidth: 50 }}
           onChange={this.onTimeChange}
         />

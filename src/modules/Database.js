@@ -1,5 +1,6 @@
 import { initializeApp, database } from 'firebase';
 import getFloatFromString from 'src/helpers/getFloatFromString';
+import getPartsFromTimeId from 'src/helpers/getPartsFromTimeId';
 
 class Database {
   constructor(databaseURL) {
@@ -73,15 +74,34 @@ class Database {
 
     var updates = {};
 
+    const toDelete = [];
+
     Object.keys(times).forEach(timeId => {
-      updates[`/times/${timeId}`] = getFloatFromString(times[timeId]);
+      const value = getFloatFromString(times[timeId]);
+
+      if (value === 0) {
+        const { cardId, dateString } = getPartsFromTimeId(timeId);
+        toDelete.push(`/datesByCard/${cardId}/${dateString}`);
+        toDelete.push(`/cardsByDate/${dateString}/${cardId}`);
+        updates[`/times/${timeId}`] = null;
+      } else {
+        updates[`/times/${timeId}`] = value;
+      }
     });
+
+    const update = ref => {
+      if (toDelete.includes(ref)) {
+        updates[ref] = null;
+      } else {
+        updates[ref] = true;
+      }
+    };
 
     Object.keys(datesByCard).forEach(cardId => {
       const times = datesByCard[cardId];
 
       Object.keys(times).forEach(dateString => {
-        updates[`/datesByCard/${cardId}/${dateString}`] = true;
+        update(`/datesByCard/${cardId}/${dateString}`);
       });
     });
 
@@ -89,7 +109,7 @@ class Database {
       const times = cardsByDate[dateString];
 
       Object.keys(times).forEach(cardId => {
-        updates[`/cardsByDate/${dateString}/${cardId}`] = true;
+        update(`/cardsByDate/${dateString}/${cardId}`);
       });
     });
 

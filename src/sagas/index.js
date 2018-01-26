@@ -21,7 +21,6 @@ function* getSuggestions({ payload }) {
 function* saveChanges() {
   try {
     const { changes } = store.getState().times;
-    console.warn('saga', changes);
     const suggestions = yield call(cards.saveChanges, changes);
     yield put({ type: 'SAVE_CHANGES_SUCCEEDED', payload: changes });
   } catch (e) {
