@@ -6,3 +6,4 @@ temp
 .env
 dist
 firebase-debug.log
+.firebaserc

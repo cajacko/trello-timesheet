@@ -2,7 +2,10 @@
   "name": "timesheet",
   "version": "0.1.0",
   "scripts": {
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "deploy": "yarn clean && yarn build && firebase deploy",
+    "build": "webpack --progress --colors --env.production",
+    "clean": "del dist/**/*"
   },
   "description": "Timesheet for Charlie Jackson",
   "main": "index.js",
@@ -20,9 +23,11 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "css-loader": "^0.28.7",
+    "del-cli": "^1.1.0",
     "dotenv": "^4.0.0",
     "file-loader": "^1.1.6",
     "firebase": "^4.9.0",
+    "firebase-tools": "^3.17.4",
     "html-webpack-plugin": "^2.30.1",
     "immutable": "^3.8.2",
     "lodash": "^4.17.4",
