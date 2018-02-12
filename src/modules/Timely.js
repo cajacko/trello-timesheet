@@ -2,7 +2,25 @@ import Trello from './Trello';
 
 class Timely {
   static isAuthenticated() {
-    return !!Trello.getData('access_token');
+    return Timely.authenticatedFetch('https://api.timelyapp.com/1.1/accounts');
+  }
+
+  static authenticatedFetch(endpoint, options = {}) {
+    return Trello.getData('access_token')
+      .then(token =>
+        fetch(endpoint, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          ...options,
+        }),
+      )
+      .then(response => response.json())
+      .then(response => {
+        console.log(response);
+        return response;
+      });
   }
 
   static getOAuthCodeUrl() {
@@ -33,8 +51,10 @@ class Timely {
     })
       .then(response => response.json())
       .then(({ access_token, refresh_token, ...props }) => {
-        Trello.setData('access_token', access_token);
-        Trello.setData('refresh_token', refresh_token);
+        return Promise.all([
+          Trello.setData('access_token', access_token),
+          Trello.setData('refresh_token', refresh_token),
+        ]);
       });
   }
 

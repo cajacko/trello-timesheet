@@ -1,7 +1,15 @@
 class Trello {
+  static isTrello() {
+    return (
+      window.location.ancestorOrigins &&
+      window.location.ancestorOrigins.contains('https://trello.com')
+    );
+  }
+
   static init() {
-    if (global.TrelloPowerUp) {
-      global.TrelloPowerUp.initialize({
+    if (Trello.isTrello()) {
+      console.warn('hi');
+      window.TrelloPowerUp.initialize({
         'card-buttons': function(t, options) {
           return [
             {
@@ -23,11 +31,22 @@ class Trello {
   }
 
   static setData(key, value) {
-    localStorage.setItem(key, value);
+    if (Trello.isTrello()) {
+      var t = window.TrelloPowerUp.iframe();
+      return t.storeSecret(key, value);
+    } else {
+      localStorage.setItem(key, value);
+      return Promise.resolve();
+    }
   }
 
   static getData(key) {
-    return localStorage.getItem(key);
+    if (Trello.isTrello()) {
+      var t = window.TrelloPowerUp.iframe();
+      return t.loadSecret(key);
+    } else {
+      return Promise.resolve(localStorage.getItem(key));
+    }
   }
 }
 
