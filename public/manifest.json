@@ -1,6 +1,6 @@
 {
-  "name": "Timesheet",
-  "details": "Trello timesheets for Charlie Jackson",
+  "name": "Timely",
+  "details": "Timely Integration for Trello",
   "icon": {
     "url":
       "https://cdn.glitch.com/1b42d7fe-bda8-4af8-a6c8-eff0cea9e08a%2Fstartup.png?1494946700268"
@@ -14,7 +14,7 @@
   ],
   "connectors": {
     "iframe": {
-      "url": "https://cajacko.github.io/trello-timesheet/index.html"
+      "url": "./index.html"
     }
   }
 }
