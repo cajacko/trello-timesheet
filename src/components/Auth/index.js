@@ -19,7 +19,7 @@ class Auth extends PureComponent {
         throw new Error('Undefined stage in auth');
     }
 
-    callback(parseQueryString(this.props.location.search));
+    callback(parseQueryString(this.props.location.search), this.props);
   }
 
   render() {

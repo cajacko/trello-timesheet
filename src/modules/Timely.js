@@ -1,6 +1,8 @@
+import Trello from './Trello';
+
 class Timely {
   static isAuthenticated() {
-    return false;
+    return !!Trello.getData('access_token');
   }
 
   static getOAuthCode() {
@@ -11,11 +13,11 @@ class Timely {
     window.location.href = `https://api.timelyapp.com/1.1/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=${applicationId}`;
   }
 
-  static gotOAuthCode({ code }) {
-    Timely.getOAuthToken(code);
+  static gotOAuthCode({ code }, { history: { push } }) {
+    Timely.getOAuthToken(code, push);
   }
 
-  static getOAuthToken(code) {
+  static getOAuthToken(code, push) {
     const redirect = Timely.getAuthRedirectUrl();
 
     const body = JSON.stringify({
@@ -34,7 +36,11 @@ class Timely {
       body,
     })
       .then(response => response.json())
-      .then(console.log);
+      .then(({ access_token, refresh_token }) => {
+        Trello.setData('access_token', access_token);
+        Trello.setData('refresh_token', refresh_token);
+        push('/add-time');
+      });
   }
 
   static getAuthRedirectUrl(encode) {
