@@ -11,7 +11,7 @@ class Auth extends PureComponent {
         callback = Timely.getOAuthCode;
         break;
 
-      case 'got-oauth-code':
+      case 'callback':
         callback = Timely.gotOAuthCode;
         break;
 

@@ -1,12 +1,10 @@
-import getAuthRedirectUrl from '../helpers/getAuthRedirectUrl';
-
 class Timely {
   static isAuthenticated() {
     return false;
   }
 
   static getOAuthCode() {
-    const redirect = getAuthRedirectUrl('got-oauth-code');
+    const redirect = Timely.getAuthRedirectUrl(true);
 
     const applicationId = process.env.REACT_APP_TIMELY_APPLICATION_ID;
 
@@ -18,27 +16,33 @@ class Timely {
   }
 
   static getOAuthToken(code) {
-    console.warn(code);
+    const redirect = Timely.getAuthRedirectUrl();
 
-    const redirect = getAuthRedirectUrl('got-oauth-token');
-
-    console.warn(redirect);
-
-    const body = `redirect_uri=${redirect}&code=${code}&client_id=${
-      process.env.REACT_APP_TIMELY_APPLICATION_ID
-    }&client_secret=${
-      process.env.REACT_APP_TIMELY_APPLICATION_SECRET
-    }&grant_type=authorization_code`;
-
-    console.warn(body);
+    const body = JSON.stringify({
+      redirect_uri: redirect,
+      code,
+      client_id: process.env.REACT_APP_TIMELY_APPLICATION_ID,
+      client_secret: process.env.REACT_APP_TIMELY_APPLICATION_SECRET,
+      grant_type: 'authorization_code',
+    });
 
     fetch('https://api.timelyapp.com/1.1/oauth/token', {
       method: 'POST',
       headers: new Headers({
-        'Content-Type': 'text/plain',
+        'Content-Type': 'application/json',
       }),
       body,
-    }).then(response => response.json());
+    })
+      .then(response => response.json())
+      .then(console.log);
+  }
+
+  static getAuthRedirectUrl(encode) {
+    const url = `${window.location.protocol}//${window.location.hostname}${
+      window.location.port ? `:${window.location.port}` : ''
+    }/auth/callback`;
+
+    return encode ? encodeURIComponent(url) : url;
   }
 }
 
