@@ -13,7 +13,7 @@ class PrivateRoute extends PureComponent {
     Timely.isAuthenticated()
       .then(this.setState({ loading: false, isAuthenticated: true }))
       .catch(err => {
-        console.error(err);
+        console.log('Authentication error', err);
         this.setState({ loading: false, isAuthenticated: false });
       });
   }

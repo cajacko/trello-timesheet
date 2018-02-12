@@ -7,14 +7,17 @@ class Timely {
 
   static authenticatedFetch(endpoint, options = {}) {
     return Trello.getData('access_token')
-      .then(token =>
-        fetch(endpoint, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          ...options,
-        }),
+      .then(
+        token =>
+          !token
+            ? Promise.reject('No Access Token Defined')
+            : fetch(endpoint, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                },
+                ...options,
+              }),
       )
       .then(response => response.json())
       .then(response => {
@@ -50,12 +53,10 @@ class Timely {
       body,
     })
       .then(response => response.json())
-      .then(({ access_token, refresh_token, ...props }) => {
-        return Promise.all([
-          Trello.setData('access_token', access_token),
-          Trello.setData('refresh_token', refresh_token),
-        ]);
-      });
+      .then(
+        ({ access_token, refresh_token, ...props }) =>
+          access_token || Promise.reject('No auth token'),
+      );
   }
 
   static getAuthRedirectUrl(encode) {

@@ -8,7 +8,6 @@ class Trello {
 
   static init() {
     if (Trello.isTrello()) {
-      console.warn('hi');
       window.TrelloPowerUp.initialize({
         'card-buttons': function(t, options) {
           return [
@@ -31,22 +30,12 @@ class Trello {
   }
 
   static setData(key, value) {
-    if (Trello.isTrello()) {
-      var t = window.TrelloPowerUp.iframe();
-      return t.storeSecret(key, value);
-    } else {
-      localStorage.setItem(key, value);
-      return Promise.resolve();
-    }
+    localStorage.setItem(key, value);
+    return Promise.resolve();
   }
 
   static getData(key) {
-    if (Trello.isTrello()) {
-      var t = window.TrelloPowerUp.iframe();
-      return t.loadSecret(key);
-    } else {
-      return Promise.resolve(localStorage.getItem(key));
-    }
+    return Promise.resolve(localStorage.getItem(key));
   }
 }
 
