@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 
-const AddTime = () => (
-  <div>
-    <h2>AddTime</h2>
-  </div>
-);
+class AddTime extends PureComponent {
+  render() {
+    return <div>Add Time</div>;
+  }
+}
 
 export default AddTime;
