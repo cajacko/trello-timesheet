@@ -1,5 +1,3 @@
-const data = {};
-
 class Trello {
   static init() {
     if (global.TrelloPowerUp) {
@@ -25,11 +23,11 @@ class Trello {
   }
 
   static setData(key, value) {
-    data[key] = value;
+    localStorage.setItem(key, value);
   }
 
   static getData(key) {
-    return data[key];
+    return localStorage.getItem(key);
   }
 }
 

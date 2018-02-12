@@ -5,19 +5,15 @@ class Timely {
     return !!Trello.getData('access_token');
   }
 
-  static getOAuthCode() {
+  static getOAuthCodeUrl() {
     const redirect = Timely.getAuthRedirectUrl(true);
 
     const applicationId = process.env.REACT_APP_TIMELY_APPLICATION_ID;
 
-    window.location.href = `https://api.timelyapp.com/1.1/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=${applicationId}`;
+    return `https://api.timelyapp.com/1.1/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=${applicationId}`;
   }
 
-  static gotOAuthCode({ code }, { history: { push } }) {
-    Timely.getOAuthToken(code, push);
-  }
-
-  static getOAuthToken(code, push) {
+  static getOAuthToken(code) {
     const redirect = Timely.getAuthRedirectUrl();
 
     const body = JSON.stringify({
@@ -28,7 +24,7 @@ class Timely {
       grant_type: 'authorization_code',
     });
 
-    fetch('https://api.timelyapp.com/1.1/oauth/token', {
+    return fetch('https://api.timelyapp.com/1.1/oauth/token', {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json',
@@ -36,17 +32,22 @@ class Timely {
       body,
     })
       .then(response => response.json())
-      .then(({ access_token, refresh_token }) => {
+      .then(({ access_token, refresh_token, ...props }) => {
         Trello.setData('access_token', access_token);
         Trello.setData('refresh_token', refresh_token);
-        push('/add-time');
       });
   }
 
   static getAuthRedirectUrl(encode) {
-    const url = `${window.location.protocol}//${window.location.hostname}${
-      window.location.port ? `:${window.location.port}` : ''
-    }/auth/callback`;
+    let url;
+
+    if (window.location.hostname.includes('localhost')) {
+      url = `${window.location.protocol}//${window.location.hostname}${
+        window.location.port ? `:${window.location.port}` : ''
+      }/auth/callback`;
+    } else {
+      url = `${process.env.REACT_APP_PRODUCTION_URL}/auth/callback`;
+    }
 
     return encode ? encodeURIComponent(url) : url;
   }

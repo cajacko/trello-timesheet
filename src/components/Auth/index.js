@@ -4,26 +4,48 @@ import Timely from '../../modules/Timely';
 import parseQueryString from '../../helpers/parseQueryString';
 
 class Auth extends PureComponent {
-  componentWillMount() {
-    let callback;
-    switch (this.props.match.params.stage) {
-      case 'get-oauth-code':
-        callback = Timely.getOAuthCode;
-        break;
+  constructor(props) {
+    super(props);
 
-      case 'callback':
-        callback = Timely.gotOAuthCode;
-        break;
+    this.state = {
+      authUrl: Timely.getOAuthCodeUrl(),
+      code: parseQueryString(this.props.location.search).code,
+      value: '',
+    };
 
-      default:
-        throw new Error('Undefined stage in auth');
-    }
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+  }
 
-    callback(parseQueryString(this.props.location.search), this.props);
+  onSubmit(event) {
+    event.preventDefault();
+
+    Timely.getOAuthToken(this.state.value).then(() =>
+      this.props.history.push('/add-time'),
+    );
+  }
+
+  onChange(event) {
+    this.setState({ value: event.target.value });
   }
 
   render() {
-    return <div />;
+    if (this.state.code) {
+      return <p>{this.state.code}</p>;
+    }
+
+    return (
+      <form onSubmit={this.onSubmit}>
+        <p>{this.state.authUrl}</p>
+
+        <input
+          type="text"
+          placeholder="code"
+          value={this.state.value}
+          onChange={this.onChange}
+        />
+      </form>
+    );
   }
 }
 
