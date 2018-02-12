@@ -47,7 +47,7 @@ class App extends PureComponent {
 
       setInterval(() => {
         if (this.props.trelloStatus === 'SUCCEEDED') {
-          this.props.updateTrello();
+          // this.props.updateTrello();
         }
       }, 10000);
     } else if (
@@ -206,7 +206,8 @@ const mapStateToProps = ({
   status,
   addedCards,
 }) => {
-  const cards = cardsPerWeek[displayDates[0].dateString] || [];
+  let cards = cardsPerWeek[displayDates[0].dateString] || [];
+  cards = cards.slice();
 
   addedCards.forEach(id => {
     if (!cards.includes(id)) {

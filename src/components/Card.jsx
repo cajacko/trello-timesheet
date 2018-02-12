@@ -6,6 +6,9 @@ import databaseDispatcher from 'src/helpers/databaseDispatcher';
 class Card extends PureComponent {
   constructor(props) {
     super(props);
+
+    this.scroll = this.scroll.bind(this);
+    this.setRef = this.setRef.bind(this);
   }
 
   componentDidMount() {
@@ -13,10 +16,20 @@ class Card extends PureComponent {
       `/cards/${this.props.cardId}`,
       'SET_CARD',
     );
+
+    if (this.props.isAddedCard) this.scroll();
+  }
+
+  scroll() {
+    this.ref.scrollIntoView();
   }
 
   componentWillUnMount() {
     if (this.listener && this.listener.off) this.listener.off();
+  }
+
+  setRef(ref) {
+    this.ref = ref;
   }
 
   render() {
@@ -28,7 +41,7 @@ class Card extends PureComponent {
     if (!this.props.noBorder) classes += ' border-bottom';
 
     return (
-      <li className={classes}>
+      <li className={classes} ref={this.setRef}>
         <div className="row">
           <div className="col-3 text-left small">
             #{shortLink} - {name}
@@ -49,9 +62,10 @@ class Card extends PureComponent {
   }
 }
 
-const mapStateToProps = ({ displayDates, cards }, { cardId }) => ({
+const mapStateToProps = ({ displayDates, cards, addedCards }, { cardId }) => ({
   card: cards[cardId] || null,
   days: displayDates,
+  isAddedCard: addedCards.includes(cardId),
 });
 
 export default connect(mapStateToProps, undefined)(Card);
