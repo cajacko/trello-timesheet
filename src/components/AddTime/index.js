@@ -32,7 +32,16 @@ class AddTime extends PureComponent {
   }
 
   componentDidMount() {
-    this.getEntries(this.state.date);
+    this.getEntries(this.state.date).then(entries => {
+      const { endTime } = entries.find(({ endTime }) => !!endTime);
+
+      if (endTime) {
+        this.setState({
+          startTime: endTime,
+          endTime: moment().format('HH:mm'),
+        });
+      }
+    });
   }
 
   onChange(prop) {
@@ -97,7 +106,7 @@ class AddTime extends PureComponent {
   getEntries(date) {
     if (!this.state.loadingEntries) this.setState({ loadingEntries: true });
 
-    Timely.getEntries(date)
+    return Timely.getEntries(date)
       .then(entries => {
         if (
           date.format('YYYY MM DD') !== this.state.date.format('YYYY MM DD')
@@ -106,6 +115,8 @@ class AddTime extends PureComponent {
         }
 
         this.setState({ entries, loadingEntries: false });
+
+        return entries;
       })
       .catch(error => {
         this.setState({
