@@ -50,6 +50,14 @@ class Trello {
 
     return t.card('all');
   }
+
+  static closeModal() {
+    if (!Trello.isTrello()) return;
+
+    var t = window.TrelloPowerUp.iframe();
+
+    t.closeModal();
+  }
 }
 
 export default Trello;

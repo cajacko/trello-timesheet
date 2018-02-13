@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import Timely from '../../modules/Timely';
+import Trello from '../../modules/Trello';
 
 class AddTime extends PureComponent {
   constructor(props) {
@@ -105,6 +106,7 @@ class AddTime extends PureComponent {
       Timely.addEvent(startTime, endTime, this.state.project)
         .then(() => {
           this.setState({ saving: false, error: null });
+          Trello.closeModal();
         })
         .catch(error => {
           this.setState({
