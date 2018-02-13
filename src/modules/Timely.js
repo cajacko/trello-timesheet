@@ -22,7 +22,7 @@ class Timely {
               }),
       )
       .then(response => {
-        if (response.status !== 200) {
+        if (response.status >= 300 || response.status < 200) {
           console.error(response);
           throw new Error(`Non 200 response; ${response.status}`);
         }
@@ -62,7 +62,7 @@ class Timely {
       body,
     })
       .then(response => {
-        if (response.status !== 200) {
+        if (response.status >= 300 || response.status < 200) {
           console.error(response);
           throw new Error(`Non 200 response; ${response.status}`);
         }
@@ -139,7 +139,7 @@ class Timely {
       );
   }
 
-  static addEvent(note, from, to) {
+  static addEvent(note, from, to, projectId) {
     const duration = moment.duration(to.diff(from));
 
     const postData = {
@@ -150,7 +150,7 @@ class Timely {
         from: from.toISOString(),
         to: to.toISOString(),
         note,
-        // project_id: '',
+        project_id: projectId || undefined,
         // external_id: '',
         // label_ids: [],
       },
@@ -163,6 +163,16 @@ class Timely {
           method: 'POST',
           body: JSON.stringify(postData),
         },
+      ),
+    );
+  }
+
+  static getProjects() {
+    const projects = [{ id: '2', name: 'Woo' }, { id: '1', name: 'hello' }];
+
+    return Timely.getAccountId().then(accountId =>
+      Timely.authenticatedFetch(
+        `https://api.timelyapp.com/1.1/${accountId}/projects`,
       ),
     );
   }

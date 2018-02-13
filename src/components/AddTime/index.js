@@ -22,25 +22,38 @@ class AddTime extends PureComponent {
           endTime: '20:00',
         },
       ],
+      projects: null,
+      project: null,
     };
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.changeDay = this.changeDay.bind(this);
     this.getEntries = this.getEntries.bind(this);
+    this.changeProject = this.changeProject.bind(this);
   }
 
   componentDidMount() {
-    this.getEntries(this.state.date).then(entries => {
-      const { endTime } = entries.find(({ endTime }) => !!endTime);
+    Promise.all([this.getEntries(this.state.date), Timely.getProjects()]).then(
+      response => {
+        const entries = response[0];
+        const projects = response[1];
 
-      if (endTime) {
-        this.setState({
-          startTime: endTime,
-          endTime: moment().format('HH:mm'),
-        });
-      }
-    });
+        const { endTime } = entries.find(({ endTime }) => !!endTime);
+
+        const state = {
+          projects: projects || null,
+          project: (projects && projects[0]) || null,
+        };
+
+        if (endTime) {
+          state.startTime = endTime;
+          state.endTime = moment().format('HH:mm');
+        }
+
+        this.setState(state);
+      },
+    );
   }
 
   onChange(prop) {
@@ -89,7 +102,12 @@ class AddTime extends PureComponent {
 
       this.setState({ saving: true });
 
-      Timely.addEvent('Card name from Trello', startTime, endTime)
+      Timely.addEvent(
+        'Card name from Trello',
+        startTime,
+        endTime,
+        this.state.project,
+      )
         .then(() => {
           this.setState({ saving: false, error: null });
         })
@@ -102,6 +120,10 @@ class AddTime extends PureComponent {
           });
         });
     }
+  }
+
+  changeProject(event) {
+    this.setState({ project: event.target.value });
   }
 
   isStringNumberBetween(string, min, max) {
@@ -246,6 +268,25 @@ class AddTime extends PureComponent {
           <div>
             <form id="timesheet" onSubmit={this.onSubmit}>
               <div className="my-4">
+                {!!this.state.projects &&
+                  !!this.state.projects.length && (
+                    <div className="form-group">
+                      <label htmlFor="exampleFormControlSelect1">Project</label>
+                      <select
+                        className="form-control"
+                        id="exampleFormControlSelect1"
+                        onChange={this.changeProject}
+                        value={this.state.project}
+                      >
+                        {this.state.projects.map(({ id, name }) => (
+                          <option key={id} value={id}>
+                            {name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
                 <div className="form-group">
                   <label htmlFor="timesheetDate">Start Time:</label>
                   <input
@@ -300,7 +341,8 @@ class AddTime extends PureComponent {
               )}
             </form>
 
-            {this.state.entries &&
+            {!!this.state.entries &&
+              !!this.state.entries.length &&
               !this.state.loadingEntries && (
                 <table className="table table-striped my-4">
                   <thead>
