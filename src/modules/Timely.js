@@ -151,7 +151,7 @@ class Timely {
         to: to.toISOString(),
         note,
         project_id: projectId || undefined,
-        // external_id: '',
+        external_id: Trello.getCardId(),
         // label_ids: [],
       },
     };
