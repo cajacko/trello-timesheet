@@ -157,34 +157,6 @@ class AddTime extends PureComponent {
           </button>
         </header>
 
-        {this.state.loadingEntries && (
-          <div className="alert alert-info my-4" role="alert">
-            Loading
-          </div>
-        )}
-
-        {this.state.entries &&
-          !this.state.loadingEntries && (
-            <table className="table table-striped my-4">
-              <thead>
-                <tr>
-                  <th scope="col">Title</th>
-                  <th scope="col">Start Time</th>
-                  <th scope="col">End Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.entries.map(({ title, startTime, endTime }) => (
-                  <tr key={startTime}>
-                    <td>{title}</td>
-                    <td>{startTime}</td>
-                    <td>{endTime}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-
         <form id="timesheet" onSubmit={this.onSubmit}>
           <div className="my-4">
             <div className="form-group">
@@ -240,6 +212,34 @@ class AddTime extends PureComponent {
             Add
           </button>
         </form>
+
+        {this.state.loadingEntries && (
+          <div className="alert alert-info my-4" role="alert">
+            Loading
+          </div>
+        )}
+
+        {this.state.entries &&
+          !this.state.loadingEntries && (
+            <table className="table table-striped my-4">
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Start Time</th>
+                  <th scope="col">End Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.entries.map(({ title, startTime, endTime }) => (
+                  <tr key={startTime}>
+                    <td>{title}</td>
+                    <td>{startTime}</td>
+                    <td>{endTime}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
       </div>
     );
   }

@@ -103,12 +103,17 @@ class Timely {
         response
           .sort((a, b) => {
             if (a.to && b.to) {
-              return new Date(a.to) - new Date(b.to);
+              return new Date(b.to) - new Date(a.to);
             }
 
             if (a.from && b.from) {
-              return new Date(a.from) - new Date(b.from);
+              return new Date(b.from) - new Date(a.from);
             }
+
+            if (!a.to && b.to) return 1;
+            if (a.to && !b.to) return -1;
+            if (!a.from && b.from) return 1;
+            if (a.from && !b.from) return -1;
 
             return 0;
           })
