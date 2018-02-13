@@ -72,6 +72,11 @@ class Timely {
 
     return encode ? encodeURIComponent(url) : url;
   }
+
+  static getEntries(date) {
+    console.warn(date);
+    return Promise.resolve([]);
+  }
 }
 
 export default Timely;

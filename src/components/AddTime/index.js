@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
+import Timely from '../../modules/Timely';
 
 class AddTime extends PureComponent {
   constructor(props) {
@@ -27,6 +28,10 @@ class AddTime extends PureComponent {
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.changeDay = this.changeDay.bind(this);
+  }
+
+  componentDidMount() {
+    this.getEntries(this.state.date);
   }
 
   onChange(prop) {
@@ -88,10 +93,43 @@ class AddTime extends PureComponent {
     return null;
   }
 
+  getEntries(date) {
+    if (!this.state.loadingEntries) this.setState({ loadingEntries: true });
+
+    Timely.getEntries(date)
+      .then(entries => {
+        if (
+          date.format('YYYY MM DD') !== this.state.date.format('YYYY MM DD')
+        ) {
+          return;
+        }
+
+        this.setState({ entries, loadingEntries: false });
+      })
+      .catch(error => {
+        this.setState({
+          entries: null,
+          loadingEntries: false,
+          error: (error && error.message) || 'Could not load entries',
+        });
+      });
+  }
+
   changeDay(increment) {
     return event => {
       event.preventDefault();
-      console.warn('changeDay', increment);
+
+      const date = this.state.date.clone();
+
+      if (increment) {
+        date.add(1, 'days');
+      } else {
+        date.subtract(1, 'days');
+      }
+
+      this.setState({ date, loadingEntries: true });
+
+      this.getEntires(date);
     };
   }
 
