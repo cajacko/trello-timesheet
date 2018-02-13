@@ -139,34 +139,85 @@ class Timely {
       );
   }
 
+  static addLabel(label) {
+    return Timely.authenticatedFetch(
+      `https://api.timelyapp.com/1.1/${accountId}/labels`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          name: label,
+          emoji: 'http://twemoji.maxcdn.com/36x36/1f4dd.png',
+        }),
+      },
+    );
+  }
+
+  static getLabels() {
+    return Timely.getAccountId().then(accountId =>
+      Timely.authenticatedFetch(
+        `https://api.timelyapp.com/1.1/${accountId}/labels`,
+      ),
+    );
+  }
+
+  static ensureLabels(trelloLabels) {
+    let labelIds = [];
+
+    return Timely.getLabels()
+      .then(timelyLabels => {
+        const promises = [];
+
+        trelloLabels.forEach(({ name }) => {
+          const label = timelyLabels.find(label => name === label.name);
+
+          if (label) {
+            labelIds.push(label.id);
+          } else {
+            promises.push(Timely.addLabel(name));
+          }
+        });
+
+        return Promise.all(promises);
+      })
+      .then(responses => {
+        responses.forEach(({ id }) => labelIds.push(id));
+
+        return labelIds;
+      });
+  }
+
   static addEvent(from, to, projectId) {
     const duration = moment.duration(to.diff(from));
 
-    return Trello.getCard().then(card => {
-      const postData = {
-        event: {
-          day: from.format('YYYY-MM-DD'),
-          minutes: duration.minutes(),
-          hours: duration.hours(),
-          from: from.toISOString(),
-          to: to.toISOString(),
-          note: card.name,
-          project_id: projectId || undefined,
-          external_id: card.id,
-          // label_ids: [],
-        },
-      };
-
-      return Timely.getAccountId().then(accountId =>
-        Timely.authenticatedFetch(
-          `https://api.timelyapp.com/1.1/${accountId}/events`,
-          {
-            method: 'POST',
-            body: JSON.stringify(postData),
+    return Trello.getCard().then(({ id, labels, name }) =>
+      Timely.ensureLabels(labels).then(labelIds => {
+        const postData = {
+          event: {
+            day: from.format('YYYY-MM-DD'),
+            minutes: duration.minutes(),
+            hours: duration.hours(),
+            from: from.toISOString(),
+            to: to.toISOString(),
+            note: name,
+            project_id: projectId || undefined,
+            external_id: id,
+            label_ids: labelIds,
           },
-        ),
-      );
-    });
+        };
+
+        console.warn(postData);
+
+        return Timely.getAccountId().then(accountId =>
+          Timely.authenticatedFetch(
+            `https://api.timelyapp.com/1.1/${accountId}/events`,
+            {
+              method: 'POST',
+              body: JSON.stringify(postData),
+            },
+          ),
+        );
+      }),
+    );
   }
 
   static getProjects() {

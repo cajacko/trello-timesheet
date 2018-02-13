@@ -44,7 +44,7 @@ class AddTime extends PureComponent {
 
         const state = {
           projects: projects || null,
-          project: (projects && projects[0]) || null,
+          project: (projects && projects[0] && projects[0].id) || null,
         };
 
         if (endTime) {

@@ -43,6 +43,14 @@ class Trello {
       return Promise.resolve({
         id: 'localId',
         name: 'Local Trello Card Name',
+        labels: [
+          {
+            name: 'label name',
+          },
+          {
+            name: 'another label',
+          },
+        ],
       });
     }
 
@@ -56,7 +64,7 @@ class Trello {
 
     var t = window.TrelloPowerUp.iframe();
 
-    t.closeModal();
+    // t.closeModal();
   }
 }
 
