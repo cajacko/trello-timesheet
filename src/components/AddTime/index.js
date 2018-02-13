@@ -32,13 +32,60 @@ class AddTime extends PureComponent {
   onChange(prop) {
     return event => {
       event.preventDefault();
-      console.warn('onChange', event.target.value);
+      this.setState({ [prop]: event.target.value });
     };
   }
 
   onSubmit(event) {
     event.preventDefault();
-    console.warn('onSubmit', this.state);
+    const error = this.getError();
+
+    if (error) {
+      this.setState({ error });
+    } else {
+      this.setState({ saving: true });
+    }
+  }
+
+  isStringNumberBetween(string, min, max) {
+    const number = parseInt(string, 10);
+
+    console.warn(string, min, max);
+
+    if (typeof number !== 'number' || isNaN(number)) return false;
+    if (number < min || number > max) return false;
+
+    return true;
+  }
+
+  getTimeError(prop) {
+    const parts = this.state[prop].split(':');
+
+    if (parts.length !== 2) {
+      return `${prop} must be in the form "12:00"`;
+    }
+
+    if (!this.isStringNumberBetween(parts[0], 0, 23)) {
+      return `${prop} hours must be a number between 0-23`;
+    }
+
+    if (!this.isStringNumberBetween(parts[1], 0, 59)) {
+      return `${prop} minutes must be a number between 0-59`;
+    }
+
+    return null;
+  }
+
+  getError() {
+    const startError = this.getTimeError('startTime');
+
+    if (startError) return startError;
+
+    const endError = this.getTimeError('endTime');
+
+    if (endError) return startError;
+
+    return null;
   }
 
   changeDay(increment) {
@@ -149,7 +196,7 @@ class AddTime extends PureComponent {
             type="submit"
             id="submit"
             className="btn btn-primary"
-            disabled={this.state.error || this.state.saving}
+            disabled={this.state.saving}
           >
             Add
           </button>
