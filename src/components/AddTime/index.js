@@ -6,10 +6,12 @@ class AddTime extends PureComponent {
     super(props);
 
     this.state = {
-      error: 'Yes',
+      error: null,
       duration: '2:00',
       date: moment(),
       endTime: moment().format('h:mm'),
+      loadingEntries: true,
+      saving: false,
       startTime: moment()
         .subtract(1, 'hours')
         .format('h:mm'),
@@ -36,7 +38,7 @@ class AddTime extends PureComponent {
 
   onSubmit(event) {
     event.preventDefault();
-    console.warn('onChange', this.state);
+    console.warn('onSubmit', this.state);
   }
 
   changeDay(increment) {
@@ -69,26 +71,33 @@ class AddTime extends PureComponent {
           </button>
         </header>
 
-        {this.state.entries && (
-          <table className="table table-striped my-4">
-            <thead>
-              <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Start Time</th>
-                <th scope="col">End Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.entries.map(({ title, startTime, endTime }) => (
-                <tr key={startTime}>
-                  <td>{title}</td>
-                  <td>{startTime}</td>
-                  <td>{endTime}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {this.state.loadingEntries && (
+          <div className="alert alert-info my-4" role="alert">
+            Loading
+          </div>
         )}
+
+        {this.state.entries &&
+          !this.state.loadingEntries && (
+            <table className="table table-striped my-4">
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Start Time</th>
+                  <th scope="col">End Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.entries.map(({ title, startTime, endTime }) => (
+                  <tr key={startTime}>
+                    <td>{title}</td>
+                    <td>{startTime}</td>
+                    <td>{endTime}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
 
         <form id="timesheet" onSubmit={this.onSubmit}>
           <div className="my-4">
@@ -123,9 +132,16 @@ class AddTime extends PureComponent {
             Duration: {this.state.duration}hrs
           </div>
 
-          {this.state.error && (
-            <div className="alert alert-danger" role="alert">
-              Error: {this.state.error}
+          {this.state.error &&
+            !this.state.saving && (
+              <div className="alert alert-danger" role="alert">
+                Error: {this.state.error}
+              </div>
+            )}
+
+          {this.state.saving && (
+            <div className="alert alert-info my-4" role="alert">
+              Saving
             </div>
           )}
 
@@ -133,7 +149,7 @@ class AddTime extends PureComponent {
             type="submit"
             id="submit"
             className="btn btn-primary"
-            disabled={this.state.error}
+            disabled={this.state.error || this.state.saving}
           >
             Add
           </button>
