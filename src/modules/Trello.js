@@ -64,7 +64,7 @@ class Trello {
 
     var t = window.TrelloPowerUp.iframe();
 
-    // t.closeModal();
+    t.closeModal();
   }
 }
 
