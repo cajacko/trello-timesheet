@@ -167,13 +167,15 @@ class Timely {
       .then(timelyLabels => {
         const promises = [];
 
-        trelloLabels.forEach(({ name }) => {
-          const label = timelyLabels.find(label => name === label.name);
+        trelloLabels.forEach(({ name, color }) => {
+          const actualName = name === '' ? color : name;
+
+          const label = timelyLabels.find(label => actualName === label.name);
 
           if (label) {
             labelIds.push(label.id);
           } else {
-            promises.push(Timely.addLabel(name));
+            promises.push(Timely.addLabel(actualName));
           }
         });
 
