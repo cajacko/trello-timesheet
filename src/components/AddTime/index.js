@@ -50,6 +50,29 @@ class AddTime extends PureComponent {
     };
   }
 
+  getDates() {
+    try {
+      const date = this.state.date.clone();
+      date.seconds(0);
+      date.milliseconds(0);
+
+      const startTime = date.clone();
+      const endTime = date.clone();
+
+      const startTimes = this.state.startTime.split(':');
+      const endTimes = this.state.endTime.split(':');
+
+      startTime.hours(parseInt(startTimes[0], 10));
+      startTime.minutes(parseInt(startTimes[1], 10));
+      endTime.hours(parseInt(endTimes[0], 10));
+      endTime.minutes(parseInt(endTimes[1], 10));
+
+      return { startTime, endTime };
+    } catch (e) {
+      return {};
+    }
+  }
+
   onSubmit(event) {
     event.preventDefault();
     const error = this.getError();
@@ -57,7 +80,27 @@ class AddTime extends PureComponent {
     if (error) {
       this.setState({ error });
     } else {
+      const { startTime, endTime } = this.getDates();
+
+      if (!startTime || !endTime) {
+        this.setState({ error: 'Could not convert times to dates' });
+        return;
+      }
+
       this.setState({ saving: true });
+
+      Timely.addEvent('Card name from Trello', startTime, endTime)
+        .then(() => {
+          this.setState({ saving: false, error: null });
+        })
+        .catch(error => {
+          this.setState({
+            saving: false,
+            error:
+              (error && error.message) ||
+              'Could not save time, for unknown reason',
+          });
+        });
     }
   }
 

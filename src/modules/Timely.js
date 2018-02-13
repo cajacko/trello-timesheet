@@ -124,6 +124,36 @@ class Timely {
           })),
       );
   }
+
+  static addEvent(note, from, to) {
+    const duration = moment.duration(to.diff(from));
+
+    const postData = {
+      event: {
+        day: from.format('YYYY-MM-DD'),
+        minutes: duration.minutes(),
+        hours: duration.hours(),
+        from: from.toISOString(),
+        to: to.toISOString(),
+        note,
+        // project_id: '',
+        // external_id: '',
+        // label_ids: [],
+      },
+    };
+
+    console.warn(postData);
+
+    return Timely.getAccountId().then(accountId =>
+      Timely.authenticatedFetch(
+        `https://api.timelyapp.com/1.1/${accountId}/events`,
+        {
+          method: 'POST',
+          body: JSON.stringify(postData),
+        },
+      ),
+    );
+  }
 }
 
 export default Timely;
