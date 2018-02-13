@@ -157,89 +157,91 @@ class AddTime extends PureComponent {
           </button>
         </header>
 
-        <form id="timesheet" onSubmit={this.onSubmit}>
-          <div className="my-4">
-            <div className="form-group">
-              <label htmlFor="timesheetDate">Start Time:</label>
-              <input
-                id="timesheetDate"
-                type="text"
-                name="date"
-                placeholder="09:00"
-                value={this.state.startTime}
-                className="form-control"
-                onChange={this.onChange('startTime')}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="timesheetDate">End Time:</label>
-              <input
-                id="timesheetDate"
-                type="text"
-                name="date"
-                placeholder="14:00"
-                value={this.state.endTime}
-                className="form-control"
-                onChange={this.onChange('endTime')}
-              />
-            </div>
-          </div>
-
-          <div className="alert alert-secondary" role="alert">
-            Duration: {this.state.duration}hrs
-          </div>
-
-          {this.state.error &&
-            !this.state.saving && (
-              <div className="alert alert-danger" role="alert">
-                Error: {this.state.error}
-              </div>
-            )}
-
-          {this.state.saving && (
-            <div className="alert alert-info my-4" role="alert">
-              Saving
-            </div>
-          )}
-
-          <button
-            type="submit"
-            id="submit"
-            className="btn btn-primary"
-            disabled={this.state.saving}
-          >
-            Add
-          </button>
-        </form>
-
-        {this.state.loadingEntries && (
+        {this.state.loadingEntries ? (
           <div className="alert alert-info my-4" role="alert">
             Loading
           </div>
-        )}
+        ) : (
+          <div>
+            <form id="timesheet" onSubmit={this.onSubmit}>
+              <div className="my-4">
+                <div className="form-group">
+                  <label htmlFor="timesheetDate">Start Time:</label>
+                  <input
+                    id="timesheetDate"
+                    type="text"
+                    name="date"
+                    placeholder="09:00"
+                    value={this.state.startTime}
+                    className="form-control"
+                    onChange={this.onChange('startTime')}
+                  />
+                </div>
 
-        {this.state.entries &&
-          !this.state.loadingEntries && (
-            <table className="table table-striped my-4">
-              <thead>
-                <tr>
-                  <th scope="col">Title</th>
-                  <th scope="col">Start Time</th>
-                  <th scope="col">End Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.entries.map(({ title, startTime, endTime }) => (
-                  <tr key={startTime}>
-                    <td>{title}</td>
-                    <td>{startTime}</td>
-                    <td>{endTime}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                <div className="form-group">
+                  <label htmlFor="timesheetDate">End Time:</label>
+                  <input
+                    id="timesheetDate"
+                    type="text"
+                    name="date"
+                    placeholder="14:00"
+                    value={this.state.endTime}
+                    className="form-control"
+                    onChange={this.onChange('endTime')}
+                  />
+                </div>
+              </div>
+
+              <div className="alert alert-secondary" role="alert">
+                Duration: {this.state.duration}hrs
+              </div>
+
+              {this.state.error &&
+                !this.state.saving && (
+                  <div className="alert alert-danger" role="alert">
+                    Error: {this.state.error}
+                  </div>
+                )}
+
+              {this.state.saving && (
+                <div className="alert alert-info my-4" role="alert">
+                  Saving
+                </div>
+              )}
+
+              <button
+                type="submit"
+                id="submit"
+                className="btn btn-primary"
+                disabled={this.state.saving}
+              >
+                Add
+              </button>
+            </form>
+
+            {this.state.entries &&
+              !this.state.loadingEntries && (
+                <table className="table table-striped my-4">
+                  <thead>
+                    <tr>
+                      <th scope="col">Title</th>
+                      <th scope="col">Start Time</th>
+                      <th scope="col">End Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.entries.map(({ title, startTime, endTime }) => (
+                      <tr key={startTime}>
+                        <td>{title}</td>
+                        <td>{startTime}</td>
+                        <td>{endTime}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+          </div>
+        )}
       </div>
     );
   }
