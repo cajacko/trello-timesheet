@@ -12,6 +12,29 @@ class AddTime extends PureComponent {
       endTime: moment(),
       startTime: moment().subtract(1, 'hours'),
     };
+
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.changeDay = this.changeDay.bind(this);
+  }
+
+  onChange(prop) {
+    return event => {
+      event.preventDefault();
+      console.warn('onChange', event.target.value);
+    };
+  }
+
+  onSubmit(event) {
+    event.preventDefault();
+    console.warn('onChange', this.state);
+  }
+
+  changeDay(increment) {
+    return event => {
+      event.preventDefault();
+      console.warn('changeDay', increment);
+    };
   }
 
   render() {
@@ -23,16 +46,24 @@ class AddTime extends PureComponent {
     return (
       <div>
         <header className="d-flex justify-content-between">
-          <button className="btn btn-light" style={buttonStyle}>
+          <button
+            className="btn btn-light"
+            style={buttonStyle}
+            onClick={this.changeDay(false)}
+          >
             <i className="fa fa-angle-left" aria-hidden="true" />
           </button>
           <h3>{this.state.date.format('dddd Do MMMM, YYYY')}</h3>
-          <button className="btn btn-light" style={buttonStyle}>
+          <button
+            className="btn btn-light"
+            style={buttonStyle}
+            onClick={this.changeDay(true)}
+          >
             <i className="fa fa-angle-right" aria-hidden="true" />
           </button>
         </header>
 
-        <form id="timesheet">
+        <form id="timesheet" onSubmit={this.onSubmit}>
           <div className="my-4">
             <div className="form-group">
               <label htmlFor="timesheetDate">Start Time:</label>
@@ -43,6 +74,7 @@ class AddTime extends PureComponent {
                 placeholder="09:00"
                 value={startTime}
                 className="form-control"
+                onChange={this.onChange('startTime')}
               />
             </div>
 
@@ -55,6 +87,7 @@ class AddTime extends PureComponent {
                 placeholder="14:00"
                 value={endTime}
                 className="form-control"
+                onChange={this.onChange('endTime')}
               />
             </div>
           </div>
