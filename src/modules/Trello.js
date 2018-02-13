@@ -20,9 +20,6 @@ class Trello {
                   title: 'Add Time',
                   url: './add-time',
                   height: 800,
-                  args: {
-                    cardId: t.getContext().card,
-                  },
                 });
               },
             },
@@ -41,12 +38,17 @@ class Trello {
     return Promise.resolve(localStorage.getItem(key));
   }
 
-  static getCardId() {
-    if (!Trello.isTrello()) return undefined;
+  static getCard() {
+    if (!Trello.isTrello()) {
+      return Promise.resolve({
+        id: 'localId',
+        name: 'Local Trello Card Name',
+      });
+    }
 
     var t = window.TrelloPowerUp.iframe();
 
-    return t.arg('cardId');
+    return t.card('all');
   }
 }
 

@@ -102,12 +102,7 @@ class AddTime extends PureComponent {
 
       this.setState({ saving: true });
 
-      Timely.addEvent(
-        'Card name from Trello',
-        startTime,
-        endTime,
-        this.state.project,
-      )
+      Timely.addEvent(startTime, endTime, this.state.project)
         .then(() => {
           this.setState({ saving: false, error: null });
         })

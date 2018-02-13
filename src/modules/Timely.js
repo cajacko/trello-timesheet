@@ -139,37 +139,37 @@ class Timely {
       );
   }
 
-  static addEvent(note, from, to, projectId) {
+  static addEvent(from, to, projectId) {
     const duration = moment.duration(to.diff(from));
 
-    const postData = {
-      event: {
-        day: from.format('YYYY-MM-DD'),
-        minutes: duration.minutes(),
-        hours: duration.hours(),
-        from: from.toISOString(),
-        to: to.toISOString(),
-        note,
-        project_id: projectId || undefined,
-        external_id: Trello.getCardId(),
-        // label_ids: [],
-      },
-    };
-
-    return Timely.getAccountId().then(accountId =>
-      Timely.authenticatedFetch(
-        `https://api.timelyapp.com/1.1/${accountId}/events`,
-        {
-          method: 'POST',
-          body: JSON.stringify(postData),
+    return Trello.getCard().then(card => {
+      const postData = {
+        event: {
+          day: from.format('YYYY-MM-DD'),
+          minutes: duration.minutes(),
+          hours: duration.hours(),
+          from: from.toISOString(),
+          to: to.toISOString(),
+          note: card.name,
+          project_id: projectId || undefined,
+          external_id: card.id,
+          // label_ids: [],
         },
-      ),
-    );
+      };
+
+      return Timely.getAccountId().then(accountId =>
+        Timely.authenticatedFetch(
+          `https://api.timelyapp.com/1.1/${accountId}/events`,
+          {
+            method: 'POST',
+            body: JSON.stringify(postData),
+          },
+        ),
+      );
+    });
   }
 
   static getProjects() {
-    const projects = [{ id: '2', name: 'Woo' }, { id: '1', name: 'hello' }];
-
     return Timely.getAccountId().then(accountId =>
       Timely.authenticatedFetch(
         `https://api.timelyapp.com/1.1/${accountId}/projects`,
