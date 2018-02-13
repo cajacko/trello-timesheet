@@ -9,8 +9,17 @@ class AddTime extends PureComponent {
       error: 'Yes',
       duration: '2:00',
       date: moment(),
-      endTime: moment(),
-      startTime: moment().subtract(1, 'hours'),
+      endTime: moment().format('h:mm'),
+      startTime: moment()
+        .subtract(1, 'hours')
+        .format('h:mm'),
+      entries: [
+        {
+          title: 'Hello',
+          startTime: '12:00',
+          endTime: '20:00',
+        },
+      ],
     };
 
     this.onChange = this.onChange.bind(this);
@@ -38,9 +47,6 @@ class AddTime extends PureComponent {
   }
 
   render() {
-    const startTime = this.state.startTime.format('h:mm');
-    const endTime = this.state.endTime.format('h:mm');
-
     const buttonStyle = { minWidth: 50 };
 
     return (
@@ -63,6 +69,27 @@ class AddTime extends PureComponent {
           </button>
         </header>
 
+        {this.state.entries && (
+          <table className="table table-striped my-4">
+            <thead>
+              <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.entries.map(({ title, startTime, endTime }) => (
+                <tr key={startTime}>
+                  <td>{title}</td>
+                  <td>{startTime}</td>
+                  <td>{endTime}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
         <form id="timesheet" onSubmit={this.onSubmit}>
           <div className="my-4">
             <div className="form-group">
@@ -72,7 +99,7 @@ class AddTime extends PureComponent {
                 type="text"
                 name="date"
                 placeholder="09:00"
-                value={startTime}
+                value={this.state.startTime}
                 className="form-control"
                 onChange={this.onChange('startTime')}
               />
@@ -85,7 +112,7 @@ class AddTime extends PureComponent {
                 type="text"
                 name="date"
                 placeholder="14:00"
-                value={endTime}
+                value={this.state.endTime}
                 className="form-control"
                 onChange={this.onChange('endTime')}
               />
