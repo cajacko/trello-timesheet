@@ -21,7 +21,14 @@ class Timely {
                 ...options,
               }),
       )
-      .then(response => response.json())
+      .then(response => {
+        if (response.status !== 200) {
+          console.error(response);
+          throw new Error(`Non 200 response; ${response.status}`);
+        }
+
+        return response.json();
+      })
       .then(response => {
         console.debug(response);
         return response;
@@ -54,7 +61,14 @@ class Timely {
       }),
       body,
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.status !== 200) {
+          console.error(response);
+          throw new Error(`Non 200 response; ${response.status}`);
+        }
+
+        return response.json();
+      })
       .then(
         ({ access_token, refresh_token, ...props }) =>
           access_token || Promise.reject('No auth token'),
@@ -141,8 +155,6 @@ class Timely {
         // label_ids: [],
       },
     };
-
-    console.warn(postData);
 
     return Timely.getAccountId().then(accountId =>
       Timely.authenticatedFetch(

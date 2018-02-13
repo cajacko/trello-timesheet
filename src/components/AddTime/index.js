@@ -277,9 +277,18 @@ class AddTime extends PureComponent {
                 Duration: {duration}hrs
               </div>
 
+              <button
+                type="submit"
+                id="submit"
+                className="btn btn-primary"
+                disabled={this.state.saving}
+              >
+                Add
+              </button>
+
               {this.state.error &&
                 !this.state.saving && (
-                  <div className="alert alert-danger" role="alert">
+                  <div className="alert alert-danger my-4" role="alert">
                     Error: {this.state.error}
                   </div>
                 )}
@@ -289,15 +298,6 @@ class AddTime extends PureComponent {
                   Saving
                 </div>
               )}
-
-              <button
-                type="submit"
-                id="submit"
-                className="btn btn-primary"
-                disabled={this.state.saving}
-              >
-                Add
-              </button>
             </form>
 
             {this.state.entries &&
