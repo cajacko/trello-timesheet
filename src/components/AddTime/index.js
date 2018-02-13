@@ -10,12 +10,12 @@ class AddTime extends PureComponent {
       error: null,
       duration: '2:00',
       date: moment(),
-      endTime: moment().format('h:mm'),
+      endTime: moment().format('HH:mm'),
       loadingEntries: true,
       saving: false,
       startTime: moment()
         .subtract(1, 'hours')
-        .format('h:mm'),
+        .format('HH:mm'),
       entries: [
         {
           title: 'Hello',
@@ -28,6 +28,7 @@ class AddTime extends PureComponent {
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.changeDay = this.changeDay.bind(this);
+    this.getEntries = this.getEntries.bind(this);
   }
 
   componentDidMount() {
@@ -129,7 +130,7 @@ class AddTime extends PureComponent {
 
       this.setState({ date, loadingEntries: true });
 
-      this.getEntires(date);
+      this.getEntries(date);
     };
   }
 

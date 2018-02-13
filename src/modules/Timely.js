@@ -1,8 +1,10 @@
 import Trello from './Trello';
+import moment from 'moment';
+let accountId;
 
 class Timely {
   static isAuthenticated() {
-    return Timely.authenticatedFetch('https://api.timelyapp.com/1.1/accounts');
+    return Timely.getAccountId(true);
   }
 
   static authenticatedFetch(endpoint, options = {}) {
@@ -21,7 +23,7 @@ class Timely {
       )
       .then(response => response.json())
       .then(response => {
-        console.log(response);
+        console.debug(response);
         return response;
       });
   }
@@ -73,9 +75,37 @@ class Timely {
     return encode ? encodeURIComponent(url) : url;
   }
 
+  static getAccountId(forceFetch = false) {
+    if (!forceFetch) {
+      if (accountId) return Promise.resolve(accountId);
+    }
+
+    return Timely.authenticatedFetch(
+      'https://api.timelyapp.com/1.1/accounts',
+    ).then(accounts => {
+      const account = accounts.find(({ name }) => name === 'Curious Squid Co');
+
+      accountId = account && account.id;
+      return accountId;
+    });
+  }
+
   static getEntries(date) {
-    console.warn(date);
-    return Promise.resolve([]);
+    const day = date.format('YYYY-MM-DD');
+
+    return Timely.getAccountId()
+      .then(accountId =>
+        Timely.authenticatedFetch(
+          `https://api.timelyapp.com/1.1/${accountId}/events?day=${day}`,
+        ),
+      )
+      .then(response =>
+        response.map(({ note, from, to }) => ({
+          title: note || 'No Title Set',
+          startTime: from && moment(from).format('HH:mm'),
+          endTime: to && moment(to).format('HH:mm'),
+        })),
+      );
   }
 }
 
