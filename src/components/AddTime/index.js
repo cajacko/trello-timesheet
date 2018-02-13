@@ -8,7 +8,6 @@ class AddTime extends PureComponent {
 
     this.state = {
       error: null,
-      duration: '2:00',
       date: moment(),
       endTime: moment().format('HH:mm'),
       loadingEntries: true,
@@ -64,8 +63,6 @@ class AddTime extends PureComponent {
 
   isStringNumberBetween(string, min, max) {
     const number = parseInt(string, 10);
-
-    console.warn(string, min, max);
 
     if (typeof number !== 'number' || isNaN(number)) return false;
     if (number < min || number > max) return false;
@@ -145,8 +142,38 @@ class AddTime extends PureComponent {
     };
   }
 
+  pad(n) {
+    return n < 10 ? '0' + n : n;
+  }
+
+  timeToDate(prop) {
+    const date = new Date();
+
+    const parts = this.state[prop].split(':');
+
+    if (this.getTimeError(prop)) return null;
+
+    date.setHours(parseInt(parts[0], 10));
+    date.setMinutes(parseInt(parts[1], 10));
+
+    return moment(date);
+  }
+
+  getDuration() {
+    const startTime = this.timeToDate('startTime');
+    const endTime = this.timeToDate('endTime');
+
+    if (!startTime || !endTime) return '00:00';
+
+    const diff = moment.duration(endTime.diff(startTime));
+
+    return `${this.pad(diff.hours())}:${this.pad(diff.minutes())}`;
+  }
+
   render() {
     const buttonStyle = { minWidth: 50 };
+
+    const duration = this.getDuration();
 
     return (
       <div>
@@ -204,7 +231,7 @@ class AddTime extends PureComponent {
               </div>
 
               <div className="alert alert-secondary" role="alert">
-                Duration: {this.state.duration}hrs
+                Duration: {duration}hrs
               </div>
 
               {this.state.error &&
