@@ -100,11 +100,23 @@ class Timely {
         ),
       )
       .then(response =>
-        response.map(({ note, from, to }) => ({
-          title: note || 'No Title Set',
-          startTime: from && moment(from).format('HH:mm'),
-          endTime: to && moment(to).format('HH:mm'),
-        })),
+        response
+          .sort((a, b) => {
+            if (a.to && b.to) {
+              return new Date(a.to) - new Date(b.to);
+            }
+
+            if (a.from && b.from) {
+              return new Date(a.from) - new Date(b.from);
+            }
+
+            return 0;
+          })
+          .map(({ note, from, to }) => ({
+            title: note || 'No Title Set',
+            startTime: from && moment(from).format('HH:mm'),
+            endTime: to && moment(to).format('HH:mm'),
+          })),
       );
   }
 }
