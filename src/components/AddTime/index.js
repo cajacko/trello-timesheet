@@ -40,7 +40,9 @@ class AddTime extends PureComponent {
         const entries = response[0];
         const projects = response[1];
 
-        const { endTime } = entries.find(({ endTime }) => !!endTime);
+        const lastEntry = entries.find(({ endTime }) => !!endTime);
+
+        const endTime = lastEntry ? lastEntry.lastEntry : null;
 
         const state = {
           projects: projects || null,
