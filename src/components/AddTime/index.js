@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import Timely from '../../modules/Timely';
 import Trello from '../../modules/Trello';
+import TimeInput from '../TimeInput';
 
 class AddTime extends PureComponent {
   constructor(props) {
@@ -63,9 +64,8 @@ class AddTime extends PureComponent {
   }
 
   onChange(prop) {
-    return event => {
-      event.preventDefault();
-      this.setState({ [prop]: event.target.value, duration: null });
+    return value => {
+      this.setState({ [prop]: value, duration: null });
     };
   }
 
@@ -227,9 +227,7 @@ class AddTime extends PureComponent {
     return moment(date);
   }
 
-  changeDuration(event) {
-    const duration = event.target.value;
-
+  changeDuration(duration) {
     const state = { duration };
 
     const endTime = this.timeToDate('endTime');
@@ -317,46 +315,28 @@ class AddTime extends PureComponent {
 
                 <div className="form-row">
                   <div className="col">
-                    <div className="form-group">
-                      <label htmlFor="timesheetDate">Start Time:</label>
-                      <input
-                        id="timesheetDate"
-                        type="text"
-                        name="date"
-                        placeholder="09:00"
-                        value={this.state.startTime}
-                        className="form-control"
-                        onChange={this.onChange('startTime')}
-                      />
-                    </div>
+                    <TimeInput
+                      label="Start Time"
+                      placeholder="09:00"
+                      value={this.state.startTime}
+                      onChange={this.onChange('startTime')}
+                    />
                   </div>
                   <div className="col">
-                    <div className="form-group">
-                      <label htmlFor="timesheetDate">End Time:</label>
-                      <input
-                        id="timesheetDate"
-                        type="text"
-                        name="date"
-                        placeholder="14:00"
-                        value={this.state.endTime}
-                        className="form-control"
-                        onChange={this.onChange('endTime')}
-                      />
-                    </div>
+                    <TimeInput
+                      label="End Time"
+                      placeholder="14:00"
+                      value={this.state.endTime}
+                      onChange={this.onChange('endTime')}
+                    />
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="timesheetDate">Duration:</label>
-                  <input
-                    id="timesheetDate"
-                    type="text"
-                    name="date"
-                    value={duration}
-                    className="form-control"
-                    onChange={this.changeDuration}
-                  />
-                </div>
+                <TimeInput
+                  label="Duration"
+                  value={duration}
+                  onChange={this.changeDuration}
+                />
               </div>
 
               <button
