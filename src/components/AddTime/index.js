@@ -13,6 +13,7 @@ class AddTime extends PureComponent {
       endTime: moment().format('HH:mm'),
       loadingEntries: true,
       saving: false,
+      duration: null,
       startTime: moment()
         .subtract(1, 'hours')
         .format('HH:mm'),
@@ -32,6 +33,7 @@ class AddTime extends PureComponent {
     this.changeDay = this.changeDay.bind(this);
     this.getEntries = this.getEntries.bind(this);
     this.changeProject = this.changeProject.bind(this);
+    this.changeDuration = this.changeDuration.bind(this);
   }
 
   componentDidMount() {
@@ -52,6 +54,7 @@ class AddTime extends PureComponent {
         if (endTime) {
           state.startTime = endTime;
           state.endTime = moment().format('HH:mm');
+          state.duration = null;
         }
 
         this.setState(state);
@@ -62,7 +65,7 @@ class AddTime extends PureComponent {
   onChange(prop) {
     return event => {
       event.preventDefault();
-      this.setState({ [prop]: event.target.value });
+      this.setState({ [prop]: event.target.value, duration: null });
     };
   }
 
@@ -134,8 +137,9 @@ class AddTime extends PureComponent {
     return true;
   }
 
-  getTimeError(prop) {
-    const parts = this.state[prop].split(':');
+  getTimeError(prop, value) {
+    const timeString = prop ? this.state[prop] : value;
+    const parts = timeString.split(':');
 
     if (parts.length !== 2) {
       return `${prop} must be in the form "12:00"`;
@@ -223,7 +227,32 @@ class AddTime extends PureComponent {
     return moment(date);
   }
 
+  changeDuration(event) {
+    const duration = event.target.value;
+
+    const state = { duration };
+
+    const endTime = this.timeToDate('endTime');
+
+    if (!this.getTimeError(null, duration) && endTime) {
+      const parts = duration.split(':');
+      const hours = parseInt(parts[0], 10) * 60;
+      const minutes = parseInt(parts[1], 10);
+
+      const startTime = endTime
+        .clone()
+        .subtract(hours + minutes, 'minutes')
+        .format('HH:mm');
+
+      state.startTime = startTime;
+    }
+
+    this.setState(state);
+  }
+
   getDuration() {
+    if (this.state.duration) return this.state.duration;
+
     const startTime = this.timeToDate('startTime');
     const endTime = this.timeToDate('endTime');
 
@@ -286,35 +315,48 @@ class AddTime extends PureComponent {
                     </div>
                   )}
 
+                <div className="form-row">
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="timesheetDate">Start Time:</label>
+                      <input
+                        id="timesheetDate"
+                        type="text"
+                        name="date"
+                        placeholder="09:00"
+                        value={this.state.startTime}
+                        className="form-control"
+                        onChange={this.onChange('startTime')}
+                      />
+                    </div>
+                  </div>
+                  <div className="col">
+                    <div className="form-group">
+                      <label htmlFor="timesheetDate">End Time:</label>
+                      <input
+                        id="timesheetDate"
+                        type="text"
+                        name="date"
+                        placeholder="14:00"
+                        value={this.state.endTime}
+                        className="form-control"
+                        onChange={this.onChange('endTime')}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div className="form-group">
-                  <label htmlFor="timesheetDate">Start Time:</label>
+                  <label htmlFor="timesheetDate">Duration:</label>
                   <input
                     id="timesheetDate"
                     type="text"
                     name="date"
-                    placeholder="09:00"
-                    value={this.state.startTime}
+                    value={duration}
                     className="form-control"
-                    onChange={this.onChange('startTime')}
+                    onChange={this.changeDuration}
                   />
                 </div>
-
-                <div className="form-group">
-                  <label htmlFor="timesheetDate">End Time:</label>
-                  <input
-                    id="timesheetDate"
-                    type="text"
-                    name="date"
-                    placeholder="14:00"
-                    value={this.state.endTime}
-                    className="form-control"
-                    onChange={this.onChange('endTime')}
-                  />
-                </div>
-              </div>
-
-              <div className="alert alert-secondary" role="alert">
-                Duration: {duration}hrs
               </div>
 
               <button
