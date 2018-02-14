@@ -42,29 +42,36 @@ class AddTime extends PureComponent {
   }
 
   componentDidMount() {
-    Promise.all([this.getEntries(this.state.date), Timely.getProjects()]).then(
-      response => {
-        const entries = response[0];
-        const projects = response[1];
+    Promise.all([
+      this.getEntries(this.state.date),
+      Timely.getProjects(),
+      Trello.getCard(),
+    ]).then(response => {
+      const { labels } = response[2];
+      const entries = response[0];
+      const projects = response[1];
 
-        const lastEntry = entries.find(({ endTime }) => !!endTime);
+      const lastEntry = entries.find(({ endTime }) => !!endTime);
 
-        const endTime = lastEntry ? lastEntry.endTime : null;
+      const endTime = lastEntry ? lastEntry.endTime : null;
 
-        const state = {
-          projects: projects || null,
-          project: (projects && projects[0] && projects[0].id) || null,
-        };
+      const state = {
+        projects: projects || null,
+        project: (projects && projects[0] && projects[0].id) || null,
+      };
 
-        if (endTime) {
-          state.startTime = endTime;
-          state.endTime = moment().format('HH:mm');
-          state.duration = null;
-        }
+      if (!labels.length) {
+        state.error = 'This card has no labels!!!! :0';
+      }
 
-        this.setState(state);
-      },
-    );
+      if (endTime) {
+        state.startTime = endTime;
+        state.endTime = moment().format('HH:mm');
+        state.duration = null;
+      }
+
+      this.setState(state);
+    });
   }
 
   onChange(prop) {
