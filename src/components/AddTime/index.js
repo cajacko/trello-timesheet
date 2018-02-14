@@ -9,6 +9,8 @@ class AddTime extends PureComponent {
     super(props);
 
     this.state = {
+      view: 'times',
+      durationViewValue: '00:10',
       error: null,
       date: moment(),
       endTime: moment().format('HH:mm'),
@@ -35,6 +37,8 @@ class AddTime extends PureComponent {
     this.getEntries = this.getEntries.bind(this);
     this.changeProject = this.changeProject.bind(this);
     this.changeDuration = this.changeDuration.bind(this);
+    this.switchView = this.switchView.bind(this);
+    this.changeDurationViewValue = this.changeDurationViewValue.bind(this);
   }
 
   componentDidMount() {
@@ -94,26 +98,47 @@ class AddTime extends PureComponent {
 
   onSubmit(event) {
     event.preventDefault();
+
     const error = this.getError();
 
     if (error) {
       this.setState({ error });
     } else {
-      const { startTime, endTime } = this.getDates();
+      let startTime;
+      let endTime;
+      let duration;
 
-      if (!startTime || !endTime) {
-        this.setState({ error: 'Could not convert times to dates' });
-        return;
+      if (this.state.view === 'duration') {
+        duration = this.getDurationMinutes(this.state.durationViewValue);
+        startTime = this.state.date;
+
+        if (!duration) {
+          this.setState({ error: 'Could not get duration' });
+          return;
+        }
+
+        duration = moment.duration(duration, 'minutes');
+      } else {
+        const times = this.getDates();
+        startTime = times.startTime;
+        endTime = times.endTime;
+
+        if (!startTime || !endTime) {
+          this.setState({ error: 'Could not convert times to dates' });
+          return;
+        }
       }
 
       this.setState({ saving: true });
 
-      Timely.addEvent(startTime, endTime, this.state.project)
+      Timely.addEvent(startTime, endTime, duration, this.state.project)
         .then(() => {
           this.setState({ saving: false, error: null });
           Trello.closeModal();
         })
         .catch(error => {
+          console.error(error);
+
           this.setState({
             saving: false,
             error:
@@ -157,6 +182,14 @@ class AddTime extends PureComponent {
   }
 
   getError() {
+    if (this.state.view === 'duration') {
+      const duration = this.getDurationMinutes(this.state.durationViewValue);
+
+      if (!duration) return 'Invalid duration';
+
+      return null;
+    }
+
     const startError = this.getTimeError('startTime');
 
     if (startError) return startError;
@@ -273,7 +306,7 @@ class AddTime extends PureComponent {
 
   adjustBy(key, value) {
     return (minutes, add) => {
-      if (key === 'duration') {
+      if (key === 'duration' || key === 'durationViewValue') {
         const durationMinutes = this.getDurationMinutes(value);
 
         if (durationMinutes) {
@@ -287,7 +320,11 @@ class AddTime extends PureComponent {
             durationObj.minutes(),
           )}`;
 
-          this.changeDuration(timeString);
+          if (key === 'durationViewValue') {
+            this.changeDurationViewValue(timeString);
+          } else {
+            this.changeDuration(timeString);
+          }
         }
       } else {
         const date = this.timeToDate(key, value);
@@ -302,6 +339,17 @@ class AddTime extends PureComponent {
         }
       }
     };
+  }
+
+  switchView(view) {
+    return event => {
+      event.preventDefault();
+      this.setState({ view });
+    };
+  }
+
+  changeDurationViewValue(durationViewValue) {
+    this.setState({ durationViewValue });
   }
 
   render() {
@@ -356,33 +404,72 @@ class AddTime extends PureComponent {
                     </div>
                   )}
 
-                <div className="form-row">
-                  <div className="col">
-                    <TimeInput
-                      label="Start Time"
-                      placeholder="09:00"
-                      value={this.state.startTime}
-                      onChange={this.onChange('startTime')}
-                      adjustBy={this.adjustBy('startTime')}
-                    />
-                  </div>
-                  <div className="col">
-                    <TimeInput
-                      label="End Time"
-                      placeholder="14:00"
-                      value={this.state.endTime}
-                      onChange={this.onChange('endTime')}
-                      adjustBy={this.adjustBy('endTime')}
-                    />
-                  </div>
+                <div
+                  className="btn-group mb-4 mt-2"
+                  role="group"
+                  aria-label="Basic example"
+                >
+                  <button
+                    onClick={this.switchView('times')}
+                    type="button"
+                    className={`btn btn-${
+                      this.state.view === 'times' ? 'info' : 'light'
+                    }`}
+                  >
+                    Times
+                  </button>
+                  <button
+                    onClick={this.switchView('duration')}
+                    type="button"
+                    className={`btn btn-${
+                      this.state.view !== 'times' ? 'info' : 'light'
+                    }`}
+                  >
+                    Duration
+                  </button>
                 </div>
 
-                <TimeInput
-                  label="Duration"
-                  value={duration}
-                  onChange={this.changeDuration}
-                  adjustBy={this.adjustBy('duration', duration)}
-                />
+                {this.state.view === 'times' ? (
+                  <div>
+                    <div className="form-row">
+                      <div className="col">
+                        <TimeInput
+                          label="Start Time"
+                          placeholder="09:00"
+                          value={this.state.startTime}
+                          onChange={this.onChange('startTime')}
+                          adjustBy={this.adjustBy('startTime')}
+                        />
+                      </div>
+                      <div className="col">
+                        <TimeInput
+                          label="End Time"
+                          placeholder="14:00"
+                          value={this.state.endTime}
+                          onChange={this.onChange('endTime')}
+                          adjustBy={this.adjustBy('endTime')}
+                        />
+                      </div>
+                    </div>
+
+                    <TimeInput
+                      label="Duration"
+                      value={duration}
+                      onChange={this.changeDuration}
+                      adjustBy={this.adjustBy('duration', duration)}
+                    />
+                  </div>
+                ) : (
+                  <TimeInput
+                    label="Duration"
+                    value={this.state.durationViewValue}
+                    onChange={this.changeDurationViewValue}
+                    adjustBy={this.adjustBy(
+                      'durationViewValue',
+                      this.state.durationViewValue,
+                    )}
+                  />
+                )}
               </div>
 
               <button

@@ -188,8 +188,12 @@ class Timely {
       });
   }
 
-  static addEvent(from, to, projectId) {
-    const duration = moment.duration(to.diff(from));
+  static addEvent(from, to, duration, projectId) {
+    const noTimes = !!duration;
+
+    if (!duration) {
+      duration = moment.duration(to.diff(from));
+    }
 
     return Trello.getCard().then(({ id, labels, name }) =>
       Timely.ensureLabels(labels).then(labelIds => {
@@ -198,8 +202,8 @@ class Timely {
             day: from.format('YYYY-MM-DD'),
             minutes: duration.minutes(),
             hours: duration.hours(),
-            from: from.toISOString(),
-            to: to.toISOString(),
+            from: noTimes ? undefined : from.toISOString(),
+            to: noTimes ? undefined : to.toISOString(),
             note: name,
             project_id: projectId || undefined,
             external_id: id,
