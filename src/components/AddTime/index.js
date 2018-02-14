@@ -138,7 +138,7 @@ class AddTime extends PureComponent {
   }
 
   getTimeError(prop, value) {
-    const timeString = prop ? this.state[prop] : value;
+    const timeString = value ? value : this.state[prop];
     const parts = timeString.split(':');
 
     if (parts.length !== 2) {
@@ -214,12 +214,13 @@ class AddTime extends PureComponent {
     return n < 10 ? '0' + n : n;
   }
 
-  timeToDate(prop) {
+  timeToDate(prop, value) {
     const date = new Date();
+    const timeString = value ? value : this.state[prop];
 
-    const parts = this.state[prop].split(':');
+    const parts = timeString.split(':');
 
-    if (this.getTimeError(prop)) return null;
+    if (this.getTimeError(prop, value)) return null;
 
     date.setHours(parseInt(parts[0], 10));
     date.setMinutes(parseInt(parts[1], 10));
@@ -259,6 +260,24 @@ class AddTime extends PureComponent {
     const diff = moment.duration(endTime.diff(startTime));
 
     return `${this.pad(diff.hours())}:${this.pad(diff.minutes())}`;
+  }
+
+  adjustBy(key, value) {
+    return (minutes, add) => {
+      if (key === 'duration') {
+      } else {
+        const date = this.timeToDate(key, value);
+
+        if (date) {
+          const timeString = date[add ? 'add' : 'subtract'](
+            minutes,
+            'minutes',
+          ).format('HH:mm');
+
+          this.onChange(key)(timeString);
+        }
+      }
+    };
   }
 
   render() {
@@ -320,6 +339,7 @@ class AddTime extends PureComponent {
                       placeholder="09:00"
                       value={this.state.startTime}
                       onChange={this.onChange('startTime')}
+                      adjustBy={this.adjustBy('startTime')}
                     />
                   </div>
                   <div className="col">
@@ -328,6 +348,7 @@ class AddTime extends PureComponent {
                       placeholder="14:00"
                       value={this.state.endTime}
                       onChange={this.onChange('endTime')}
+                      adjustBy={this.adjustBy('endTime')}
                     />
                   </div>
                 </div>
@@ -336,6 +357,7 @@ class AddTime extends PureComponent {
                   label="Duration"
                   value={duration}
                   onChange={this.changeDuration}
+                  adjustBy={this.adjustBy('duration', duration)}
                 />
               </div>
 
