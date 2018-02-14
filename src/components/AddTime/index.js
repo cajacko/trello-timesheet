@@ -228,19 +228,28 @@ class AddTime extends PureComponent {
     return moment(date);
   }
 
-  changeDuration(duration) {
-    const state = { duration };
-
-    const endTime = this.timeToDate('endTime');
-
-    if (!this.getTimeError(null, duration) && endTime) {
+  getDurationMinutes(duration) {
+    if (!this.getTimeError(null, duration)) {
       const parts = duration.split(':');
       const hours = parseInt(parts[0], 10) * 60;
       const minutes = parseInt(parts[1], 10);
 
+      return hours + minutes;
+    }
+
+    return null;
+  }
+
+  changeDuration(duration) {
+    const state = { duration };
+
+    const endTime = this.timeToDate('endTime');
+    const minutes = this.getDurationMinutes(duration);
+
+    if (minutes && endTime) {
       const startTime = endTime
         .clone()
-        .subtract(hours + minutes, 'minutes')
+        .subtract(minutes, 'minutes')
         .format('HH:mm');
 
       state.startTime = startTime;
@@ -265,6 +274,21 @@ class AddTime extends PureComponent {
   adjustBy(key, value) {
     return (minutes, add) => {
       if (key === 'duration') {
+        const durationMinutes = this.getDurationMinutes(value);
+
+        if (durationMinutes) {
+          const finalMinutes = add
+            ? durationMinutes + minutes
+            : durationMinutes - minutes;
+
+          const durationObj = moment.duration(finalMinutes, 'minutes');
+
+          const timeString = `${this.pad(durationObj.hours())}:${this.pad(
+            durationObj.minutes(),
+          )}`;
+
+          this.changeDuration(timeString);
+        }
       } else {
         const date = this.timeToDate(key, value);
 
