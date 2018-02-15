@@ -390,7 +390,7 @@ class AddTime extends PureComponent {
           </div>
         ) : (
           <div>
-            <form id="timesheet" onSubmit={this.onSubmit}>
+            <form id="timesheet" onSubmit={this.onSubmit} autocomplete="off">
               <div className="my-4">
                 {!!this.state.projects &&
                   !!this.state.projects.length && (
