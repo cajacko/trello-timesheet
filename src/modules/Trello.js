@@ -29,7 +29,22 @@ class Trello {
     }
   }
 
+  static setCardProject(cardId, projectId) {
+    const key = `cardProject-${cardId}`;
+
+    return Trello.setData(key, projectId);
+  }
+
+  static getCardProject(cardId) {
+    return Trello.getData(`cardProject-${cardId}`).then(data => {
+      if (!data) throw new Error('No project for this card');
+
+      return data;
+    });
+  }
+
   static setData(key, value) {
+    console.warn(key, value);
     localStorage.setItem(key, value);
     return Promise.resolve();
   }

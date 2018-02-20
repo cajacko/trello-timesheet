@@ -213,15 +213,21 @@ class Timely {
 
         console.warn(postData);
 
-        return Timely.getAccountId().then(accountId =>
-          Timely.authenticatedFetch(
-            `https://api.timelyapp.com/1.1/${accountId}/events`,
-            {
-              method: 'POST',
-              body: JSON.stringify(postData),
-            },
-          ),
-        );
+        return Timely.getAccountId()
+          .then(accountId =>
+            Timely.authenticatedFetch(
+              `https://api.timelyapp.com/1.1/${accountId}/events`,
+              {
+                method: 'POST',
+                body: JSON.stringify(postData),
+              },
+            ),
+          )
+          .then(response => {
+            Trello.setCardProject(id, projectId);
+
+            return response;
+          });
       }),
     );
   }

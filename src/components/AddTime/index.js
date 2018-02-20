@@ -28,7 +28,7 @@ class AddTime extends PureComponent {
         },
       ],
       projects: null,
-      project: null,
+      project: 'null',
     };
 
     this.onChange = this.onChange.bind(this);
@@ -47,30 +47,39 @@ class AddTime extends PureComponent {
       Timely.getProjects(),
       Trello.getCard(),
     ]).then(response => {
-      const { labels } = response[2];
-      const entries = response[0];
-      const projects = response[1];
+      const { id, labels } = response[2];
 
-      const lastEntry = entries.find(({ endTime }) => !!endTime);
+      return Trello.getCardProject(id)
+        .catch(() => null)
+        .then(projectId => {
+          const entries = response[0];
+          const projects = response[1];
 
-      const endTime = lastEntry ? lastEntry.endTime : null;
+          const lastEntry = entries.find(({ endTime }) => !!endTime);
 
-      const state = {
-        projects: projects || null,
-        project: null,
-      };
+          const endTime = lastEntry ? lastEntry.endTime : null;
 
-      if (!labels.length) {
-        state.error = 'This card has no labels!!!! :0';
-      }
+          const state = {
+            projects: projects || null,
+            project: '',
+          };
 
-      if (endTime) {
-        state.startTime = endTime;
-        state.endTime = moment().format('HH:mm');
-        state.duration = null;
-      }
+          if (projectId) {
+            state.project = projectId;
+          }
 
-      this.setState(state);
+          if (!labels.length) {
+            state.error = 'This card has no labels!!!! :0';
+          }
+
+          if (endTime) {
+            state.startTime = endTime;
+            state.endTime = moment().format('HH:mm');
+            state.duration = null;
+          }
+
+          this.setState(state);
+        });
     });
   }
 
@@ -141,6 +150,7 @@ class AddTime extends PureComponent {
       Timely.addEvent(startTime, endTime, duration, this.state.project)
         .then(() => {
           this.setState({ saving: false, error: null });
+
           Trello.closeModal();
         })
         .catch(error => {
@@ -189,9 +199,15 @@ class AddTime extends PureComponent {
   }
 
   getError() {
-    if (!this.state.project || this.state.project === 'null') {
+    if (!this.state.project || this.state.project === '') {
       return 'You must select a project';
     }
+
+    const projectExists =
+      this.state.projects &&
+      this.state.projects.find(({ id }) => `${id}` === this.state.project);
+
+    if (!projectExists) return 'Selected project does not exist';
 
     if (this.state.view === 'duration') {
       const duration = this.getDurationMinutes(this.state.durationViewValue);
@@ -394,7 +410,7 @@ class AddTime extends PureComponent {
           </div>
         ) : (
           <div>
-            <form id="timesheet" onSubmit={this.onSubmit} autocomplete="off">
+            <form id="timesheet" onSubmit={this.onSubmit} autoComplete="off">
               <div className="my-4">
                 {!!this.state.projects &&
                   !!this.state.projects.length && (
@@ -406,7 +422,7 @@ class AddTime extends PureComponent {
                         onChange={this.changeProject}
                         value={this.state.project}
                       >
-                        <option value="null">Please Select</option>
+                        <option value="">Please Select</option>
                         {this.state.projects.map(({ id, name }) => (
                           <option key={id} value={id}>
                             {name}
