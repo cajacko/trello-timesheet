@@ -57,7 +57,7 @@ class AddTime extends PureComponent {
 
       const state = {
         projects: projects || null,
-        project: (projects && projects[0] && projects[0].id) || null,
+        project: null,
       };
 
       if (!labels.length) {
@@ -189,6 +189,10 @@ class AddTime extends PureComponent {
   }
 
   getError() {
+    if (!this.state.project || this.state.project === 'null') {
+      return 'You must select a project';
+    }
+
     if (this.state.view === 'duration') {
       const duration = this.getDurationMinutes(this.state.durationViewValue);
 
@@ -402,6 +406,7 @@ class AddTime extends PureComponent {
                         onChange={this.changeProject}
                         value={this.state.project}
                       >
+                        <option value="null">Please Select</option>
                         {this.state.projects.map(({ id, name }) => (
                           <option key={id} value={id}>
                             {name}
