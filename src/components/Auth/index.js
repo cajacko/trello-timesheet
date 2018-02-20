@@ -50,20 +50,53 @@ class Auth extends PureComponent {
   }
 
   render() {
-    if (this.state.loading) return <p>Loading</p>;
-    if (this.state.token) return <p>{this.state.token}</p>;
-    if (this.state.error) return <p>Error, check logs</p>;
+    if (this.state.loading)
+      return (
+        <div className="alert alert-info my-4" role="alert">
+          Loading
+        </div>
+      );
+
+    if (this.state.token)
+      return (
+        <div className="alert alert-info my-4" role="alert">
+          {this.state.token}
+        </div>
+      );
+
+    if (this.state.error)
+      return (
+        <div className="alert alert-error my-4" role="alert">
+          Error, check logs
+        </div>
+      );
 
     return (
       <form onSubmit={this.onSubmit}>
-        <p>{this.state.authUrl}</p>
+        <div
+          className="alert alert-info my-4"
+          role="alert"
+          style={{
+            overflow: 'auto',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {this.state.authUrl}
+        </div>
 
-        <input
-          type="text"
-          placeholder="code"
-          value={this.state.value}
-          onChange={this.onChange}
-        />
+        <div className="form-group">
+          <input
+            className="form-control"
+            type="text"
+            placeholder="code"
+            value={this.state.value}
+            onChange={this.onChange}
+          />
+
+          <button type="submit" className="btn btn-primary mt-4">
+            Submit
+          </button>
+        </div>
       </form>
     );
   }
